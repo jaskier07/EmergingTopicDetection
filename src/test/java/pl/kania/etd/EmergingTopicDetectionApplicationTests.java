@@ -1,4 +1,4 @@
-package pl.kania.petd;
+package pl.kania.etd;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

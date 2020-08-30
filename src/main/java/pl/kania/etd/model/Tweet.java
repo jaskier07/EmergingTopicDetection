@@ -7,6 +7,7 @@ import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.author.Author;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -18,12 +19,14 @@ public class Tweet {
     private final LocalDateTime createdAt;
     @Setter
     private TimePeriod timePeriod;
+    private Set<Word> words;
 
     public Tweet(Author author, String content, LocalDateTime createdAt) {
         this.id = UUID.randomUUID().toString();
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;
+        this.words = ContentSplitter.splitIntoWords(content);
     }
 
     @Override
