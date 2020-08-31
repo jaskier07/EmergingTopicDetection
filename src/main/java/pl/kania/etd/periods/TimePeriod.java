@@ -6,9 +6,7 @@ import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode(of = "id")
@@ -20,6 +18,7 @@ public class TimePeriod {
     private final LocalDateTime endTime;
     private final Set<Tweet> tweets = new HashSet<>();
     private final Set<Word> words = new HashSet<>();
+    private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.number = index;
@@ -36,5 +35,12 @@ public class TimePeriod {
     public void addTweet(Tweet tweet) {
         tweets.add(tweet);
         words.addAll(tweet.getWords());
+        tweet.getWords().forEach(word -> {
+            WordStatistics wordTimePeriod = new WordStatistics(word.getWord(), word.getNutrition());
+            wordStatistics.merge(word.getWord(), wordTimePeriod, (w1, w2) -> {
+                w1.incrementTweets();
+                return w1;
+            });
+        });
     }
 }

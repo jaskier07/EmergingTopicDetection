@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
+import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -32,7 +33,6 @@ EmergingTopicDetectionApplication {
 		TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
 		AuthoritySetter.setForAllAuthors();
-
+		periods.forEach(NutritionCounter::countNutritionInPeriod);
 	}
-
 }

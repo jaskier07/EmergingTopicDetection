@@ -38,6 +38,10 @@ public class TimePeriods {
                 .orElseThrow(() -> new NoSuchElementException("Period for date " + date + " not found! Available periods: " + getPeriodRanges()));
     }
 
+    public List<TimePeriod> getAllPeriods() {
+        return new ArrayList<>(periods);
+    }
+
     private String getPeriodRanges() {
         return periods.stream()
                 .map(TimePeriod::toString)
