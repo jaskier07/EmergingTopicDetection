@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -26,13 +27,11 @@ EmergingTopicDetectionApplication {
 		CsvReader reader = ctx.getBean(CsvReader.class);
 		CsvReaderResult csvReaderResult = reader.readFile(environment.getProperty("pl.kania.path.dataset"));
 
-		long periodStep = Long.parseLong(environment.getProperty("pl.kania.period-duration"));
-		int chronoUnitOrdinal = Integer.parseInt(environment.getProperty("pl.kania.period-duration.chrono-unit-ordinal"));
-		Duration periodDuration = Duration.of(periodStep, ChronoUnit.values()[chronoUnitOrdinal]);
-
-		List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), periodDuration);
+		List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
 		TimePeriods.getInstance().addPeriods(periods);
 		TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
+
+		AuthoritySetter.setForAllAuthors();
 
 	}
 

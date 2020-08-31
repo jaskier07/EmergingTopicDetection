@@ -1,7 +1,8 @@
-package pl.kania.etd.model;
+package pl.kania.etd.content;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -12,6 +13,10 @@ public class Word implements Comparable<Word> {
     private final String id = UUID.randomUUID().toString();
     private final String word;
     private final double weight;
+    @Setter
+    private Tweet tweet;
+    @Setter
+    private double nutrition;
 
     public Word(String word, double weight) {
         this.weight = weight;

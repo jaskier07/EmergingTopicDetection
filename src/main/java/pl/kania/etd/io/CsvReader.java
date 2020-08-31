@@ -5,11 +5,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.kania.etd.CriticalException;
 import pl.kania.etd.author.Author;
-import pl.kania.etd.model.Tweet;
+import pl.kania.etd.content.Tweet;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.util.ProgressLogger;
 
@@ -18,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.Set;
 

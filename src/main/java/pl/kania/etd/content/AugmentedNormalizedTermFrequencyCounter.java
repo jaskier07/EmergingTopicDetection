@@ -1,4 +1,4 @@
-package pl.kania.etd.model;
+package pl.kania.etd.content;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

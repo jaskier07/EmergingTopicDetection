@@ -1,10 +1,8 @@
-package pl.kania.etd.model;
+package pl.kania.etd.content;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.*;
 

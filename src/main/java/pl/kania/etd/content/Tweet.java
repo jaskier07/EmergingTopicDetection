@@ -1,4 +1,4 @@
-package pl.kania.etd.model;
+package pl.kania.etd.content;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,6 +27,7 @@ public class Tweet {
         this.content = content;
         this.createdAt = createdAt;
         this.words = ContentSplitter.splitIntoWords(content);
+        this.words.forEach(w -> w.setTweet(this));
     }
 
     @Override

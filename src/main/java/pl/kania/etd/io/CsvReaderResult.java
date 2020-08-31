@@ -1,7 +1,7 @@
 package pl.kania.etd.io;
 
 import lombok.Value;
-import pl.kania.etd.model.Tweet;
+import pl.kania.etd.content.Tweet;
 
 import java.time.LocalDateTime;
 import java.util.Set;

@@ -3,8 +3,10 @@ package pl.kania.etd.author;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Authors {
@@ -25,11 +27,16 @@ public class Authors {
             author.incrementTweetsWritten();
             return author;
         }
-        return authors.put(username, new Author(username, followers));
+        authors.put(username, new Author(username, followers));
+        return getAuthor(username);
     }
 
     public Author getAuthor(String username) {
         return authors.get(username);
+    }
+
+    public Collection<Author> getAllAuthors() {
+        return authors.values();
     }
 
 }
