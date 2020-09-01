@@ -1,12 +1,13 @@
 package pl.kania.etd.graph;
 
 import lombok.*;
-import lombok.extern.jbosslog.JBossLog;
 import lombok.extern.slf4j.Slf4j;
-import pl.kania.etd.content.Tweet;
 import pl.kania.etd.debug.Counter;
 import pl.kania.etd.debug.ProgressLogger;
+import pl.kania.etd.periods.Cooccurrence;
 import pl.kania.etd.periods.TimePeriod;
+
+import java.util.Optional;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,7 +16,7 @@ public class CorrelationVectorCounter {
     public static void countCorrelationAndFillWords(TimePeriod period) {
         String[] words = period.getWordStatistics().keySet().toArray(new String[0]);
         long allTweets = getAllTweets(period);
-        Counter counter = new Counter();
+        ProgressLogger pl = new ProgressLogger();
 
         for (int i = 0; i < words.length; i++) {
             String word1 = words[i];
@@ -26,27 +27,34 @@ public class CorrelationVectorCounter {
                 long tweetsContainingWord2 = getTweetsContainingWord(word2, period);
                 long tweetsContainingBothWords = getTweetsContainingBothWords(word1, word2, period);
 
-                double correlation = countCorrelation(Parameters.builder()
+                Optional<Double> result = countCorrelation(Parameters.builder()
                         .allTweets(allTweets)
                         .tweetsContainingBothWords(tweetsContainingBothWords)
                         .tweetsContainingWord1(tweetsContainingWord1)
-                        .tweetsContainingWord1(tweetsContainingWord2)
+                        .tweetsContainingWord2(tweetsContainingWord2)
                         .build());
 
-                putRecordToCorrelationVector(period, word1, word2, correlation);
-                putRecordToCorrelationVector(period, word2, word1, correlation);
-                ProgressLogger.log(counter);
+                double correlation = result.orElse(0.);
+                if (result.isPresent()) {
+                    putRecordToCorrelationVector(period, word1, word2, correlation);
+                    putRecordToCorrelationVector(period, word2, word1, correlation);
+                }
             }
+            pl.log(300);
         }
 
-        ProgressLogger.done("period #" + period.getId());
+        pl.done("period #" + period.getIndex());
     }
 
     private static Double putRecordToCorrelationVector(TimePeriod period, String word1, String word2, double correlation) {
         return period.getWordStatistics().get(word1).getCorrelationVector().put(word2, correlation);
     }
 
-    public static double countCorrelation(Parameters p) {
+    public static Optional<Double> countCorrelation(Parameters p) {
+        if (!p.isDataValid()) {
+            return Optional.empty();
+        }
+
         double nominatorExpression1 = 1. * p.getTweetsContainingBothWords() / (p.getTweetsContainingWord1() - p.getTweetsContainingBothWords());
         double denominatorExpression1 = (p.getTweetsContainingWord2() - p.getTweetsContainingBothWords()) /
                 (1. * (p.getAllTweets() - p.getTweetsContainingWord2() - p.getTweetsContainingWord1() + p.getTweetsContainingBothWords()));
@@ -55,23 +63,17 @@ public class CorrelationVectorCounter {
         double expression2 = p.getTweetsContainingBothWords() * 1. / p.getTweetsContainingWord1();
         double expression3 = (p.getTweetsContainingWord2() * 1. - p.getTweetsContainingBothWords()) / (p.getAllTweets() - p.getTweetsContainingWord1());
 
-        return expression1 * (expression2 - expression3);
+        double result = expression1 * (expression2 - expression3);
+        return Double.isNaN(result) ? Optional.empty() : Optional.of(result);
     }
 
     private static long getTweetsContainingBothWords(String word1, String word2, TimePeriod period) {
-        return period.getTweets().stream()
-                .filter(t -> tweetContainsWord(word1, t) && tweetContainsWord(word2, t))
-                .count();
+        Integer value = period.getCooccurrences().get(new Cooccurrence(word1, word2));
+        return value == null ? 0 : value;
     }
 
     private static long getTweetsContainingWord(String word, TimePeriod period) {
-        return period.getTweets().stream()
-                .filter(t -> tweetContainsWord(word, t))
-                .count();
-    }
-
-    private static boolean tweetContainsWord(String word, Tweet tweet) {
-        return tweet.getWords().stream().anyMatch(w -> w.getWord().equals(word));
+        return period.getWordStatistics().get(word).getTweets();
     }
 
     private static int getAllTweets(TimePeriod period) {
@@ -97,5 +99,9 @@ public class CorrelationVectorCounter {
          * N
          */
         long allTweets;
+
+        boolean isDataValid() {
+            return tweetsContainingBothWords != 0;
+        }
     }
 }

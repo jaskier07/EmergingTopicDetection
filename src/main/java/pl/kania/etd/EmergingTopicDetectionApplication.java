@@ -46,6 +46,8 @@ EmergingTopicDetectionApplication {
             EnergyCounter.count(periods, periodIndex, numPreviousPeriods);
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
+
+        System.gc();
         periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
     }
 }

@@ -1,31 +1,29 @@
 package pl.kania.etd.debug;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProgressLogger {
+    private Counter counter = new Counter();
 
-    public static void log(long index) {
-        log(index, 5000);
+    public void log() {
+        log(5000);
     }
 
-    public static void log(long index, int threshold) {
-        if (index % threshold == 0) {
+    public void log(int threshold) {
+        counter.increment();
+        if (counter.getValue() % threshold == 0) {
             System.out.print('.');
         }
     }
 
-    public static void done(String text) {
-        System.out.println("Done. " + text);
+    public void done(String text) {
+        System.out.println("Done: " + text);
     }
 
-    public static void done() {
+    public void done() {
         System.out.println("Done.");
     }
 
-    public static void log(Counter counter) {
-        counter.increment();
-        log(counter.getValue());
+    public void log(String s) {
+        System.out.print(s);
     }
+
 }

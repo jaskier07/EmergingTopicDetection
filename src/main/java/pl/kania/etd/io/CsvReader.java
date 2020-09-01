@@ -38,6 +38,7 @@ public class CsvReader {
         firstTweetTime = LocalDateTime.MAX;
         lastTweetTime = LocalDateTime.MIN;
         Set<Tweet> tweets = new HashSet<>();
+        ProgressLogger pl = new ProgressLogger();
 
         try (InputStream is = getClass().getResourceAsStream(path);
              InputStreamReader input = new InputStreamReader(is)
@@ -48,14 +49,13 @@ public class CsvReader {
                 try {
                     Tweet tweet = getTweetFromRecord(record);
                     tweets.add(tweet);
-                    ProgressLogger.log(record.getRecordNumber());
+                    pl.log();
                 } catch (Exception e) {
                     log.warn("Problem with reading record. Record number: " + record.getRecordNumber(), e);
                 }
             }
-            ProgressLogger.done();
+            pl.done("Reading file.");
 
-            log.info("Finished reading file.");
             return new CsvReaderResult(tweets, firstTweetTime, lastTweetTime);
         } catch (IOException e) {
             log.error("Cannot find csv containing tweets", e);
