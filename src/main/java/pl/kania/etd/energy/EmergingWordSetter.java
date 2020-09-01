@@ -24,7 +24,7 @@ public class EmergingWordSetter {
                 }
             });
 
-            log.info("Drop in period #" + period.getNumber() + ": " + dropInPeriod + ", % of emergent words: "
+            log.info("Drop in period #" + period.getIndex() + ": " + dropInPeriod + ", % of emergent words: "
                     + (ctr.getValue() / period.getWordStatistics().size() * 100.) + ", num of emergent words: " + ctr.getValue());
         });
     }

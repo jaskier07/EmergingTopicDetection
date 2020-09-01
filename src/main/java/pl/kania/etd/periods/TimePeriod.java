@@ -13,7 +13,7 @@ import java.util.*;
 public class TimePeriod {
 
     private final String id;
-    private final int number;
+    private final int index;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
     private final Set<Tweet> tweets = new HashSet<>();
@@ -21,7 +21,7 @@ public class TimePeriod {
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
-        this.number = index;
+        this.index = index;
         this.id = UUID.randomUUID().toString();
         this.startTime = startTime;
         this.endTime = endTime;

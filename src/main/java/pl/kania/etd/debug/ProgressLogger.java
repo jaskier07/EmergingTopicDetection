@@ -16,7 +16,16 @@ public class ProgressLogger {
         }
     }
 
+    public static void done(String text) {
+        System.out.println("Done. " + text);
+    }
+
     public static void done() {
         System.out.println("Done.");
+    }
+
+    public static void log(Counter counter) {
+        counter.increment();
+        log(counter.getValue());
     }
 }

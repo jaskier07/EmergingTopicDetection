@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
 @EqualsAndHashCode(of = "word")
 public class WordStatistics {
@@ -16,6 +19,7 @@ public class WordStatistics {
     private double energy;
     @Setter
     private boolean emerging;
+    private final Map<String, Double> correlationVector = new HashMap<>();
 
     public WordStatistics(String word) {
         this.word = word;

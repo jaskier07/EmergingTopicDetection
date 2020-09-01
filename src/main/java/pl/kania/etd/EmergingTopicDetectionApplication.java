@@ -8,6 +8,7 @@ import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
+import pl.kania.etd.graph.CorrelationVectorCounter;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -45,5 +46,6 @@ EmergingTopicDetectionApplication {
             EnergyCounter.count(periods, periodIndex, numPreviousPeriods);
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
+        periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
     }
 }

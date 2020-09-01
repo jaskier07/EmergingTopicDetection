@@ -35,6 +35,8 @@ build/
 # other
 mvnw
 mvnw.cmd
-src/main/resources/application.properties
+src/main/resources/*.csv
 ./.mvn/
-./.mvn/*
+./.mvn/wrapper/*
+*.properties
+*.jar
