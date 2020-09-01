@@ -2,6 +2,7 @@ package pl.kania.etd.periods;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.apache.commons.lang3.tuple.Pair;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 
@@ -19,6 +20,7 @@ public class TimePeriod {
     private final Set<Tweet> tweets = new HashSet<>();
     private final Set<Word> words = new HashSet<>();
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
+    private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;
@@ -35,12 +37,18 @@ public class TimePeriod {
     public void addTweet(Tweet tweet) {
         tweets.add(tweet);
         words.addAll(tweet.getWords());
-        tweet.getWords().forEach(word -> {
-            WordStatistics wordTimePeriod = new WordStatistics(word.getWord());
-            wordStatistics.merge(word.getWord(), wordTimePeriod, (w1, w2) -> {
+
+        Word[] words = tweet.getWords().toArray(new Word[0]);
+        for (int i = 0; i < words.length; i++) {
+            for (int j = i + 1; j < words.length; j++) {
+                cooccurrences.merge(new Cooccurrence(words[i].getWord(), words[j].getWord()), 1, (w1, w2) -> w1 + 1);
+            }
+
+            WordStatistics wordTimePeriod = new WordStatistics(words[i].getWord());
+            wordStatistics.merge(words[i].getWord(), wordTimePeriod, (w1, w2) -> {
                 w1.incrementTweets();
                 return w1;
             });
-        });
+        }
     }
 }

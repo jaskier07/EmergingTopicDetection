@@ -19,7 +19,7 @@ class CorrelationVectorCounterTest {
                 .allTweets(50)
                 .build();
 
-        double correlation = CorrelationVectorCounter.countCorrelation(parameters);
+        double correlation = CorrelationVectorCounter.countCorrelation(parameters).orElse(0.);
         Assertions.assertEquals(0.027, correlation, DELTA);
 
         parameters = CorrelationVectorCounter.Parameters
@@ -30,7 +30,7 @@ class CorrelationVectorCounterTest {
                 .allTweets(50)
                 .build();
 
-        correlation = CorrelationVectorCounter.countCorrelation(parameters);
+        correlation = CorrelationVectorCounter.countCorrelation(parameters).orElse(0.);
         Assertions.assertEquals(0.027, correlation, DELTA);
     }
 
