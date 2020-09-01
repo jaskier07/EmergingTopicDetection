@@ -10,7 +10,7 @@ import pl.kania.etd.CriticalException;
 import pl.kania.etd.author.Author;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.author.Authors;
-import pl.kania.etd.util.ProgressLogger;
+import pl.kania.etd.debug.ProgressLogger;
 
 import java.io.IOException;
 import java.io.InputStream;

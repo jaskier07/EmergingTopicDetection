@@ -12,19 +12,20 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnergyCounter {
 
-    public static void count(int currentPeriodIndex, int previousSlotsToConsider) {
-        List<TimePeriod> periods = TimePeriods.getInstance().getAllPeriods();
+    public static void count(List<TimePeriod> periods, int currentPeriodIndex, int previousSlotsToConsider) {
         TimePeriod currentPeriod = periods.get(currentPeriodIndex);
 
         Set<String> words = currentPeriod.getWordStatistics().keySet();
         words.forEach(word -> {
             double wordEnergy = 0.;
-            double currentNutrition = getNutrition(word, currentPeriod);
 
-            for (int periodIndex = currentPeriodIndex - 1; periodIndex >= currentPeriodIndex - previousSlotsToConsider; periodIndex--) {
-                TimePeriod period = periods.get(periodIndex);
-                double nutrition = getNutrition(word, period);
-                wordEnergy += (Math.pow(currentNutrition, 2) - Math.pow(nutrition, 2)) / (currentPeriodIndex - periodIndex);
+            if (currentPeriodIndex != 0) {
+                double currentNutrition = getNutrition(word, currentPeriod);
+                for (int periodIndex = currentPeriodIndex - 1; periodIndex >= currentPeriodIndex - previousSlotsToConsider && periodIndex >= 0; periodIndex--) {
+                    TimePeriod period = periods.get(periodIndex);
+                    double nutrition = getNutrition(word, period);
+                    wordEnergy += (Math.pow(currentNutrition, 2) - Math.pow(nutrition, 2)) / (currentPeriodIndex - periodIndex);
+                }
             }
 
             currentPeriod.getWordStatistics().get(word).setEnergy(wordEnergy);

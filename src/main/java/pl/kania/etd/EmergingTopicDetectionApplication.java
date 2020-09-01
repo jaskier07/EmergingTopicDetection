@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
+import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.io.CsvReader;
@@ -22,20 +23,27 @@ import java.util.List;
 public class
 EmergingTopicDetectionApplication {
 
-	public static void main(String[] args) {
-		ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
-		Environment environment = ctx.getBean(Environment.class);
+    public static void main(String[] args) {
+        ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
 
-		CsvReader reader = ctx.getBean(CsvReader.class);
-		CsvReaderResult csvReaderResult = reader.readFile(environment.getProperty("pl.kania.path.dataset"));
+        Environment environment = ctx.getBean(Environment.class);
+        int numPreviousPeriods = Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods"));
+        double thresholdEnergy = Double.parseDouble(environment.getProperty("pl.kania.emerging-terms-drop"));
+        String pathToDataset = environment.getProperty("pl.kania.path.dataset");
 
-		List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
-		TimePeriods.getInstance().addPeriods(periods);
-		TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
+        CsvReader reader = ctx.getBean(CsvReader.class);
+        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
 
-		AuthoritySetter.setForAllAuthors();
-		periods.forEach(NutritionCounter::countNutritionInPeriod);
+        List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
+        TimePeriods.getInstance().addPeriods(periods);
+        TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
-		EnergyCounter.count(periods.size() - 1, Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods")));
-	}
+        AuthoritySetter.setForAllAuthors();
+        periods.forEach(NutritionCounter::countNutritionInPeriod);
+
+        for (int periodIndex = periods.size() - 1; periodIndex >= 0; periodIndex--) {
+            EnergyCounter.count(periods, periodIndex, numPreviousPeriods);
+        }
+        EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
+    }
 }

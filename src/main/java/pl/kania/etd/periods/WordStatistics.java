@@ -9,11 +9,13 @@ import lombok.Value;
 @EqualsAndHashCode(of = "word")
 public class WordStatistics {
     private final String word;
-    @Setter
-    private double nutrition;
     private int tweets = 1;
     @Setter
+    private double nutrition;
+    @Setter
     private double energy;
+    @Setter
+    private boolean emerging;
 
     public WordStatistics(String word) {
         this.word = word;
