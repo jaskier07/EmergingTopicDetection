@@ -36,7 +36,7 @@ public class TimePeriod {
         tweets.add(tweet);
         words.addAll(tweet.getWords());
         tweet.getWords().forEach(word -> {
-            WordStatistics wordTimePeriod = new WordStatistics(word.getWord(), word.getNutrition());
+            WordStatistics wordTimePeriod = new WordStatistics(word.getWord());
             wordStatistics.merge(word.getWord(), wordTimePeriod, (w1, w2) -> {
                 w1.incrementTweets();
                 return w1;

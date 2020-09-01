@@ -8,8 +8,10 @@ import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 import pl.kania.etd.periods.TimePeriod;
+import pl.kania.etd.periods.WordStatistics;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -35,18 +37,9 @@ class NutritionCounterTest {
         timePeriod.addTweet(tweet3);
 
         NutritionCounter.countNutritionInPeriod(timePeriod);
-        Set<Word> words = timePeriod.getWords();
+        Map<String, WordStatistics> wordStatistics = timePeriod.getWordStatistics();
 
-        Assertions.assertEquals(2.375, findWord("nothing", words), DELTA);
-        Assertions.assertEquals(1.5, findWord("doing", words), DELTA);
+        Assertions.assertEquals(2.375, wordStatistics.get("nothing").getNutrition(), DELTA);
+        Assertions.assertEquals(1.5, wordStatistics.get("doing").getNutrition(), DELTA);
     }
-
-    private double findWord(String word, Set<Word> words) {
-        return words.stream()
-                .filter(w -> w.getWord().equals(word))
-                .findFirst()
-                .map(Word::getNutrition)
-                .orElseThrow(() -> new NoSuchElementException("Error finding word " + word));
-    }
-
 }

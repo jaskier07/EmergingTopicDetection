@@ -28,7 +28,7 @@ public class NutritionCounter {
                         return wordWeight * authority;
                     }).reduce(Double::sum)
                     .orElseThrow(() -> new IllegalStateException("Error counting nutrition"));
-            value.forEach(w -> w.setNutrition(wordNutrition));
+            period.getWordStatistics().get(key).setNutrition(wordNutrition);
         });
     }
 

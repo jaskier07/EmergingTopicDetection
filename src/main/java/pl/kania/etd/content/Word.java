@@ -15,8 +15,6 @@ public class Word implements Comparable<Word> {
     private final double weight;
     @Setter
     private Tweet tweet;
-    @Setter
-    private double nutrition;
 
     public Word(String word, double weight) {
         this.weight = weight;

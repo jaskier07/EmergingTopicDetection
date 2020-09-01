@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
+import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
@@ -34,5 +35,7 @@ EmergingTopicDetectionApplication {
 
 		AuthoritySetter.setForAllAuthors();
 		periods.forEach(NutritionCounter::countNutritionInPeriod);
+
+		EnergyCounter.count(periods.size() - 1, Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods")));
 	}
 }
