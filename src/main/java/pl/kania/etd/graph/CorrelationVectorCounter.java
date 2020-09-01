@@ -43,6 +43,7 @@ public class CorrelationVectorCounter {
             pl.log(300);
         }
 
+
         pl.done("period #" + period.getIndex());
     }
 
