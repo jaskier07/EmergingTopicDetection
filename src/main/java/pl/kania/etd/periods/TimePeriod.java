@@ -2,6 +2,9 @@ package pl.kania.etd.periods;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 
@@ -20,6 +23,8 @@ public class TimePeriod {
     private final Set<Word> words = new HashSet<>();
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
     private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
+    @Setter
+    private SimpleDirectedWeightedGraph<String, Double> correlationGraph;
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;

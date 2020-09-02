@@ -9,6 +9,7 @@ import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.graph.CorrelationVectorCounter;
+import pl.kania.etd.graph.GraphGenerator;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -16,8 +17,6 @@ import pl.kania.etd.periods.TimePeriodGenerator;
 import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 import pl.kania.etd.periods.TimePeriods;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @SpringBootApplication
@@ -49,5 +48,6 @@ EmergingTopicDetectionApplication {
 
         System.gc();
         periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
+        periods.forEach(period -> period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics())));
     }
 }
