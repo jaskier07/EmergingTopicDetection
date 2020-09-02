@@ -10,7 +10,7 @@ class MaximumDropSupplier {
 
     public static int getMaximumDropIndexInclusive(List<Drop> drops) {
         double max = Double.MIN_VALUE;
-        int maxDropIndex = -1;
+        int maxDropIndex = 0;
 
         for (Drop drop : drops) {
             if (max < drop.getValue()) {

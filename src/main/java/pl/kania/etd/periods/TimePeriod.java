@@ -7,6 +7,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
+import pl.kania.etd.graph.EdgeValue;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,7 +25,7 @@ public class TimePeriod {
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
     private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
     @Setter
-    private SimpleDirectedWeightedGraph<String, Double> correlationGraph;
+    private SimpleDirectedWeightedGraph<String, EdgeValue> correlationGraph;
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;

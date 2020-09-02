@@ -39,4 +39,8 @@ public class Authors {
         return authors.values();
     }
 
+    public void clear() {
+        authors.clear();
+    }
+
 }

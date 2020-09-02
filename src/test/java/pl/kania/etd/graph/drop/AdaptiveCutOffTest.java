@@ -11,7 +11,7 @@ class AdaptiveCutOffTest {
     @Test
     void givenValuesCutOffOnesBeforeCriticalDrop() {
         List<Value> values = DropTestFactory.getTestValues();
-        List<Value> result = AdaptiveCutOff.perform(values);
+        List<Value> result = AdaptiveCutOff.getPreservedElements(values);
 
         List<Value> preservedValues = values.subList(0, DropTestFactory.getCriticalDropIndexInclusive());
         Assertions.assertEquals(preservedValues, result);

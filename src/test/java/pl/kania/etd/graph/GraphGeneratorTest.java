@@ -7,33 +7,44 @@ import org.junit.jupiter.api.Test;
 import pl.kania.etd.periods.WordStatistics;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 class GraphGeneratorTest {
 
     @Test
     void givenWordStatisticsGenerateGraphWithProperWeights() {
-        SimpleDirectedWeightedGraph<String, Double> graph = GraphFactory.getGraph();
+        SimpleDirectedWeightedGraph<String, EdgeValue> graph = GraphTestFactory.getGraph();
 
+        List<Double[]> matrix = GraphTestFactory.getGraphMatrix();
         Map<String, WordStatistics> statistics = new HashMap<>();
-        addWordStatisticsToMap("1", new double[] { 0., 0., 0., 1., 1. }, statistics);
-        addWordStatisticsToMap("2", new double[] { 1., 0., 1., 2., 0. }, statistics);
-        addWordStatisticsToMap("3", new double[] { 1., 0., 0., 3., 0. }, statistics);
-        addWordStatisticsToMap("4", new double[] { 0., 0., 4., 0., 0. }, statistics);
-        addWordStatisticsToMap("5", new double[] { 3., 2., 0., 0., 0. }, statistics);
+        addWordStatisticsToMap(0, matrix, statistics);
+        addWordStatisticsToMap(1, matrix, statistics);
+        addWordStatisticsToMap(2, matrix, statistics);
+        addWordStatisticsToMap(3, matrix, statistics);
+        addWordStatisticsToMap(4, matrix, statistics);
 
-        SimpleDirectedWeightedGraph<String, Double> generatedGraph = GraphGenerator.generate(statistics);
+        SimpleDirectedWeightedGraph<String, EdgeValue> generatedGraph = GraphGenerator.generate(statistics);
 
         Assertions.assertEquals(graph.vertexSet(), generatedGraph.vertexSet());
-        Assertions.assertEquals(graph.edgeSet(), generatedGraph.edgeSet());
+        Assertions.assertEquals(getEdgeValues(graph), getEdgeValues(generatedGraph));
     }
 
-    private void addWordStatisticsToMap(String word, double[] correlationValues, Map<String, WordStatistics> statistics) {
+    private List<Double> getEdgeValues(SimpleDirectedWeightedGraph<String, EdgeValue> graph) {
+        return graph.edgeSet().stream().map(EdgeValue::getValue).collect(Collectors.toList());
+    }
+
+    private void addWordStatisticsToMap(int index, List<Double[]> matrix, Map<String, WordStatistics> statistics) {
+        String word = Integer.toString(index);
         WordStatistics wordStatistics = new WordStatistics(word);
 
-        int wordIndex = 1;
-        for (double value : correlationValues) {
-            wordStatistics.getCorrelationVector().put(Integer.toString(wordIndex++), value);
+        int wordIndex = 0;
+        for (double value : matrix.get(index)) {
+            if (wordIndex != index) {
+                wordStatistics.getCorrelationVector().put(Integer.toString(wordIndex), value);
+            }
+            wordIndex++;
         }
 
         statistics.put(word, wordStatistics);

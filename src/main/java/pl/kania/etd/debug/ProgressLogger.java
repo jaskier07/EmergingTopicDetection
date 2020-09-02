@@ -1,7 +1,14 @@
 package pl.kania.etd.debug;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class ProgressLogger {
     private Counter counter = new Counter();
+
+    public ProgressLogger(String text) {
+        System.out.println(text);
+    }
 
     public void log() {
         log(5000);

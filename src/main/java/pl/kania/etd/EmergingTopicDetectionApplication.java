@@ -5,9 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
+import pl.kania.etd.author.Authors;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
+import pl.kania.etd.graph.AdaptiveGraphEdgesCutOff;
 import pl.kania.etd.graph.CorrelationVectorCounter;
 import pl.kania.etd.graph.GraphGenerator;
 import pl.kania.etd.io.CsvReader;
@@ -46,8 +48,12 @@ EmergingTopicDetectionApplication {
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
 
+        Authors.getInstance().clear();
         System.gc();
+
         periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
         periods.forEach(period -> period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics())));
+
+        periods.forEach(period -> AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph()));
     }
 }

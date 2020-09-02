@@ -12,6 +12,6 @@ class AverageDropSupplier {
         return sortedDrops.stream()
                 .map(Drop::getValue)
                 .reduce(Double::sum)
-                .orElseThrow(() -> new IllegalStateException("Error summing drop values")) / (sortedDrops.size());
+                .orElse(Double.MAX_VALUE) / sortedDrops.size();
     }
 }

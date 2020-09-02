@@ -38,12 +38,11 @@ public class CsvReader {
         firstTweetTime = LocalDateTime.MAX;
         lastTweetTime = LocalDateTime.MIN;
         Set<Tweet> tweets = new HashSet<>();
-        ProgressLogger pl = new ProgressLogger();
 
         try (InputStream is = getClass().getResourceAsStream(path);
              InputStreamReader input = new InputStreamReader(is)
         ) {
-            log.info("File is being read...");
+            ProgressLogger pl = new ProgressLogger("Reading file");
             CSVParser csvParser = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(input);
             for (CSVRecord record : csvParser) {
                 try {

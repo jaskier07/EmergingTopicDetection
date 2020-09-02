@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import pl.kania.etd.debug.ProgressLogger;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.WordStatistics;
 
@@ -12,8 +13,9 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GraphGenerator {
 
-    public static SimpleDirectedWeightedGraph<String, Double> generate(Map<String, WordStatistics> wordStatistics) {
-        SimpleDirectedWeightedGraph<String, Double> graph = new SimpleDirectedWeightedGraph<>(Double.class);
+    public static SimpleDirectedWeightedGraph<String, EdgeValue> generate(Map<String, WordStatistics> wordStatistics) {
+        SimpleDirectedWeightedGraph<String, EdgeValue> graph = new SimpleDirectedWeightedGraph<>(EdgeValue.class);
+        ProgressLogger pl = new ProgressLogger("Generating graph");
 
         wordStatistics.forEach((word, statistics) -> {
             graph.addVertex(word);
@@ -21,7 +23,7 @@ public class GraphGenerator {
             statistics.getCorrelationVector().forEach((word2, value) -> {
                 graph.addVertex(word2);
                 if (value != 0 && norm != 0) {
-                    graph.addEdge(word, word2, value / norm);
+                    graph.addEdge(word, word2, new EdgeValue(value / norm));
                 }
             });
         });

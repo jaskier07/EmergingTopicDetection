@@ -12,12 +12,30 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdaptiveCutOff {
 
-    public static <T extends HasValue> List<T> perform(List<T> elements) {
+    public static List<Double> performForDouble(List<Double> elements) {
+        Comparator<Double> comparator = Double::compareTo;
+        elements.sort(comparator.reversed());
+
+        int indexInclusive = CriticalDropIndexSupplier.get(elements);
+        return elements.subList(0, indexInclusive);
+    }
+
+    public static <T extends HasValue> List<T> getPreservedElements(List<T> elements) {
+        int indexInclusive = getIndexInclusive(elements);
+        return elements.subList(0, indexInclusive);
+    }
+
+    public static <T extends HasValue> List<T> getRemovedElements(List<T> elements) {
+        int indexInclusive = getIndexInclusive(elements);
+        return elements.subList(indexInclusive, elements.size());
+    }
+
+    private static <T extends HasValue> int getIndexInclusive(List<T> elements) {
         Comparator<T> comparator = Comparator.<T, T>comparing(Function.identity()).reversed();
         elements.sort(comparator);
 
         int indexInclusive = CriticalDropIndexSupplier.get(getSortedValues(elements));
-        return elements.subList(0, indexInclusive);
+        return indexInclusive;
     }
 
     private static <T extends HasValue> List<Double> getSortedValues(List<T> elements) {
