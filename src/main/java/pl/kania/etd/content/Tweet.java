@@ -3,6 +3,7 @@ package pl.kania.etd.content;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import pl.kania.etd.content.preproc.TweetContentPreprocessor;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.author.Author;
 
@@ -24,7 +25,7 @@ public class Tweet {
     public Tweet(Author author, String content, LocalDateTime createdAt) {
         this.id = UUID.randomUUID().toString();
         this.author = author;
-        this.content = content;
+        this.content = new TweetContentPreprocessor().performPreprocessing(content);
         this.createdAt = createdAt;
         this.words = ContentSplitter.splitIntoWords(content);
         this.words.forEach(w -> w.setTweet(this));
