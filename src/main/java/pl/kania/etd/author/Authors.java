@@ -2,6 +2,7 @@ package pl.kania.etd.author;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import pl.kania.etd.SavingMemory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Authors {
+public class Authors implements SavingMemory {
 
     private static final Map<String, Author> authors = new HashMap<>();
     private static Authors instance;
@@ -39,8 +40,8 @@ public class Authors {
         return authors.values();
     }
 
-    public void clear() {
+    @Override
+    public void saveMemory() {
         authors.clear();
     }
-
 }

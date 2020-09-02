@@ -43,7 +43,6 @@ public class CorrelationVectorCounter {
             pl.log(300);
         }
 
-
         pl.done("period #" + period.getIndex());
     }
 
@@ -65,7 +64,8 @@ public class CorrelationVectorCounter {
         double expression3 = (p.getTweetsContainingWord2() * 1. - p.getTweetsContainingBothWords()) / (p.getAllTweets() - p.getTweetsContainingWord1());
 
         double result = expression1 * (expression2 - expression3);
-        return Double.isNaN(result) ? Optional.empty() : Optional.of(result);
+
+        return Double.isFinite(result) ? Optional.of(result) : Optional.empty();
     }
 
     private static long getTweetsContainingBothWords(String word1, String word2, TimePeriod period) {

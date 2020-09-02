@@ -15,6 +15,8 @@ public class EdgeValue implements HasValue<EdgeValue> {
     public int compareTo(EdgeValue o) {
         if (o == null) {
             return -1;
+        } else if (value == o.value) {
+            return 0;
         }
         return value - o.getValue() > 0 ? 1 : -1;
     }

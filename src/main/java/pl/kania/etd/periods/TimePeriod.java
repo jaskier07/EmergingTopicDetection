@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import pl.kania.etd.SavingMemory;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 import pl.kania.etd.graph.EdgeValue;
@@ -14,7 +15,7 @@ import java.util.*;
 
 @Getter
 @EqualsAndHashCode(of = "id")
-public class TimePeriod {
+public class TimePeriod implements SavingMemory {
 
     private final String id;
     private final int index;
@@ -55,5 +56,11 @@ public class TimePeriod {
                 return w1;
             });
         }
+    }
+
+    @Override
+    public void saveMemory() {
+        tweets.clear();
+        words.clear();
     }
 }

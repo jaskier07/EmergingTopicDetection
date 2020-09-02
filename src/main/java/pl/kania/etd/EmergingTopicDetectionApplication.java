@@ -41,6 +41,7 @@ EmergingTopicDetectionApplication {
         TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
         AuthoritySetter.setForAllAuthors();
+        periods = periods.subList(6, periods.size());
         periods.forEach(NutritionCounter::countNutritionInPeriod);
 
         for (int periodIndex = periods.size() - 1; periodIndex >= 0; periodIndex--) {
@@ -48,12 +49,18 @@ EmergingTopicDetectionApplication {
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
 
-        Authors.getInstance().clear();
+        Authors.getInstance().saveMemory();
         System.gc();
 
         periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
-        periods.forEach(period -> period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics())));
+        periods = periods.subList(periods.size() - 2, periods.size() - 1);
 
-        periods.forEach(period -> AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph()));
+        periods.forEach(TimePeriod::saveMemory);
+        System.gc();
+
+        periods.forEach(period -> {
+            period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
+            AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
+        });
     }
 }
