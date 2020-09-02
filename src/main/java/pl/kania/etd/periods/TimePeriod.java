@@ -2,7 +2,6 @@ package pl.kania.etd.periods;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.apache.commons.lang3.tuple.Pair;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 
