@@ -3,6 +3,7 @@ package pl.kania.etd.graph;
 import lombok.Value;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pl.kania.etd.periods.WordStatistics;
 
@@ -13,9 +14,12 @@ import java.util.stream.Collectors;
 
 class GraphGeneratorTest {
 
-    @Test
-    void givenWordStatisticsGenerateGraphWithProperWeights() {
-        SimpleDirectedWeightedGraph<String, EdgeValue> graph = GraphTestFactory.getGraph();
+    static SimpleDirectedWeightedGraph<String, EdgeValue> graph;
+    static SimpleDirectedWeightedGraph<String, EdgeValue> generatedGraph;
+
+    @BeforeAll
+    static void init() {
+        graph = GraphTestFactory.getGraph();
 
         List<Double[]> matrix = GraphTestFactory.getGraphMatrix();
         Map<String, WordStatistics> statistics = new HashMap<>();
@@ -25,17 +29,20 @@ class GraphGeneratorTest {
         addWordStatisticsToMap(3, matrix, statistics);
         addWordStatisticsToMap(4, matrix, statistics);
 
-        SimpleDirectedWeightedGraph<String, EdgeValue> generatedGraph = GraphGenerator.generate(statistics);
+        generatedGraph = GraphGenerator.generate(statistics);
+    }
 
+    @Test
+    void givenWordStatisticsGenerateGraphWithProperVertexSet() {
         Assertions.assertEquals(graph.vertexSet(), generatedGraph.vertexSet());
-        Assertions.assertEquals(getEdgeValues(graph), getEdgeValues(generatedGraph));
     }
 
-    private List<Double> getEdgeValues(SimpleDirectedWeightedGraph<String, EdgeValue> graph) {
-        return graph.edgeSet().stream().map(EdgeValue::getValue).collect(Collectors.toList());
+    @Test
+    void givenWordStatisticsGenerateGraphWithProperEdgeWeights() {
+        Assertions.assertEquals(GraphTestUtils.getEdgeValues(graph), GraphTestUtils.getEdgeValues(generatedGraph));
     }
 
-    private void addWordStatisticsToMap(int index, List<Double[]> matrix, Map<String, WordStatistics> statistics) {
+    private static void addWordStatisticsToMap(int index, List<Double[]> matrix, Map<String, WordStatistics> statistics) {
         String word = Integer.toString(index);
         WordStatistics wordStatistics = new WordStatistics(word);
 

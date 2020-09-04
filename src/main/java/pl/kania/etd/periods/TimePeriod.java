@@ -12,6 +12,7 @@ import pl.kania.etd.graph.EdgeValue;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(of = "id")
@@ -40,6 +41,12 @@ public class TimePeriod implements SavingMemory {
         return "[" + (startTime == null ? "?" : startTime.toString()) + ", " + (endTime == null ? "?" : endTime.toString()) + "]";
     }
 
+    @Override
+    public void saveMemory() {
+        tweets.clear();
+        words.clear();
+    }
+
     public void addTweet(Tweet tweet) {
         tweets.add(tweet);
         words.addAll(tweet.getWords());
@@ -58,9 +65,10 @@ public class TimePeriod implements SavingMemory {
         }
     }
 
-    @Override
-    public void saveMemory() {
-        tweets.clear();
-        words.clear();
+    public Set<String> getEmergingWords() {
+        return wordStatistics.values().stream()
+                .filter(WordStatistics::isEmerging)
+                .map(WordStatistics::getWord)
+                .collect(Collectors.toSet());
     }
 }

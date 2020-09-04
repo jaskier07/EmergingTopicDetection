@@ -1,5 +1,6 @@
 package pl.kania.etd;
 
+import org.jgrapht.Graph;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -11,8 +12,10 @@ import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.graph.AdaptiveGraphEdgesCutOff;
 import pl.kania.etd.graph.CorrelationVectorCounter;
+import pl.kania.etd.graph.EdgeValue;
 import pl.kania.etd.graph.GraphGenerator;
-import pl.kania.etd.graph.StronglyConnectedComponentsFinder;
+import pl.kania.etd.graph.scc.StronglyConnectedComponentsFinder;
+import pl.kania.etd.graph.scc.StronglyConnectedComponentsWithEmergingTweetsFinder;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -42,7 +45,7 @@ EmergingTopicDetectionApplication {
         TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
         AuthoritySetter.setForAllAuthors();
-        periods = periods.subList(6, periods.size());
+        periods = periods.subList(periods.size() - numPreviousPeriods, periods.size());
         periods.forEach(NutritionCounter::countNutritionInPeriod);
 
         for (int periodIndex = periods.size() - 1; periodIndex >= 0; periodIndex--) {
@@ -50,19 +53,18 @@ EmergingTopicDetectionApplication {
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
 
+        TimePeriod period = periods.get(periods.size() - 1); // or pre-last and last
+        periods.clear();
         Authors.getInstance().saveMemory();
         System.gc();
 
-        periods.forEach(CorrelationVectorCounter::countCorrelationAndFillWords);
-        periods = periods.subList(periods.size() - 2, periods.size() - 1);
-
-        periods.forEach(TimePeriod::saveMemory);
+        CorrelationVectorCounter.countCorrelationAndFillWords(period);
+        period.saveMemory();
         System.gc();
 
-        periods.forEach(period -> {
-            period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
-            AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
-            StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
-        });
+        period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
+        AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
+        List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
+        StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
     }
 }

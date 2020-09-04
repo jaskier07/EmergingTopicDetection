@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import pl.kania.etd.debug.PercentageFormatter;
 import pl.kania.etd.debug.ProgressLogger;
 import pl.kania.etd.graph.drop.AdaptiveCutOff;
 
@@ -25,10 +26,10 @@ public class AdaptiveGraphEdgesCutOff {
                             Set<EdgeValue> edges = graph.outgoingEdgesOf(word);
                             List<EdgeValue> removedEdges = AdaptiveCutOff.getRemovedElements(new ArrayList<>(edges));
                             graph.removeAllEdges(removedEdges);
-                            pl.log();
+                            pl.log(100);
                         }
                 );
         pl.done("Cutting off edges in graph");
-        log.info("Preserved " + graph.edgeSet().size() + " edges / " + edgesBeforeCutting);
+        log.info("Preserved " + graph.edgeSet().size() + " edges " + PercentageFormatter.format(edgesBeforeCutting, edgesBeforeCutting));
     }
 }

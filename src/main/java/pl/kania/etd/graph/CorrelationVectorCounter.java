@@ -16,7 +16,7 @@ public class CorrelationVectorCounter {
     public static void countCorrelationAndFillWords(TimePeriod period) {
         String[] words = period.getWordStatistics().keySet().toArray(new String[0]);
         long allTweets = getAllTweets(period);
-        ProgressLogger pl = new ProgressLogger();
+        ProgressLogger pl = new ProgressLogger("Counting correlation vector");
 
         for (int i = 0; i < words.length; i++) {
             String word1 = words[i];
