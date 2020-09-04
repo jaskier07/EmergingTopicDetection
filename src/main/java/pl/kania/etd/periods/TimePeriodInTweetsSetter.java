@@ -11,7 +11,7 @@ import java.util.Collection;
 public class TimePeriodInTweetsSetter {
 
     public static void setTimePeriod(Collection<Tweet> tweets) {
-        ProgressLogger pl = new ProgressLogger();
+        ProgressLogger pl = new ProgressLogger("Setting time periods for tweets");
 
         TimePeriods periods = TimePeriods.getInstance();
         tweets.forEach(tweet -> {
@@ -22,7 +22,7 @@ public class TimePeriodInTweetsSetter {
             pl.log();
         });
 
-        pl.done("Setting timer periods for all tweets.");
+        pl.done("Setting timer periods for tweets.");
     }
 
 }

@@ -8,6 +8,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
+import pl.kania.etd.content.Topic;
+import pl.kania.etd.debug.Counter;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
@@ -34,8 +36,10 @@ EmergingTopicDetectionApplication {
 
         Environment environment = ctx.getBean(Environment.class);
         int numPreviousPeriods = Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods"));
-        double thresholdEnergy = Double.parseDouble(environment.getProperty("pl.kania.emerging-terms-drop"));
+        double thresholdEnergy = Double.parseDouble(environment.getProperty("pl.kania.threshold-energy"));
         String pathToDataset = environment.getProperty("pl.kania.path.dataset");
+        int minClusterSize = Integer.parseInt(environment.getProperty("pl.kania.min-cluster-size"));
+        int maxClusterSize = Integer.parseInt(environment.getProperty("pl.kania.max-cluster-size"));
 
         CsvReader reader = ctx.getBean(CsvReader.class);
         CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
@@ -53,7 +57,7 @@ EmergingTopicDetectionApplication {
         }
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
 
-        TimePeriod period = periods.get(periods.size() - 1); // or pre-last and last
+        TimePeriod period = periods.get(periods.size() - 1 - 1); // or pre-last and last
         log.info("Preserved period: " + period.toString());
         periods.clear();
         Authors.getInstance().saveMemory();
@@ -67,7 +71,17 @@ EmergingTopicDetectionApplication {
         AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
         List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
         Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
-        List<Graph<String, EdgeValue>> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
-        sortedTopics.size();
+        List<Graph<String, EdgeValue>> sortedGraphs = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
+
+        sortedGraphs.forEach(AdaptiveGraphEdgesCutOff::perform);
+        sortedGraphs = GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedGraphs);
+        GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedGraphs, period.getWordStatistics());
+
+        log.warn("POPULAR TOPICS:");
+        Counter ctr = new Counter();
+        sortedGraphs.forEach(g -> {
+            log.info("#" + ctr.getValue() + ": " + new Topic(g.vertexSet(), period).toString());
+            ctr.increment();
+        });
     }
 }
