@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.kania.etd.debug.Counter;
+import pl.kania.etd.debug.PercentageFormatter;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.TimePeriods;
 import pl.kania.etd.periods.WordStatistics;
@@ -24,8 +25,8 @@ public class EmergingWordSetter {
                 }
             });
 
-            log.info("Drop in period #" + period.getIndex() + ": " + dropInPeriod + ", % of emergent words: "
-                    + (ctr.getValue() / period.getWordStatistics().size() * 100.) + ", num of emergent words: " + ctr.getValue());
+            log.info("Period #" + period.getIndex() + ": drop(" + dropInPeriod + "), emergent %( " +
+                    PercentageFormatter.format(ctr.getValue(), period.getWordStatistics().size()) + "), emergent(" + ctr.getValue() + ")");
         });
     }
 

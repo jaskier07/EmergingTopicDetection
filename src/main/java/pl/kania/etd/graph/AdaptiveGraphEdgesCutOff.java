@@ -30,6 +30,6 @@ public class AdaptiveGraphEdgesCutOff {
                         }
                 );
         pl.done("Cutting off edges in graph");
-        log.info("Preserved " + graph.edgeSet().size() + " edges " + PercentageFormatter.format(edgesBeforeCutting, edgesBeforeCutting));
+        log.info("Preserved " + graph.edgeSet().size() + " edges " + PercentageFormatter.format(graph.edgeSet().size(), edgesBeforeCutting));
     }
 }

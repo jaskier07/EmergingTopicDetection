@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 public class PercentageFormatter {
 
     public static <T extends Number> String format(T value, T max) {
-        return String.format("%.2f", " (" + 100. * value.doubleValue() / max.doubleValue()) + "%) ";
+        return " (" + String.format("%.2f", 100. * value.doubleValue() / max.doubleValue()) + "%) ";
     }
 }

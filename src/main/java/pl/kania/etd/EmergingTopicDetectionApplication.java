@@ -1,5 +1,6 @@
 package pl.kania.etd;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +11,7 @@ import pl.kania.etd.author.Authors;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
-import pl.kania.etd.graph.AdaptiveGraphEdgesCutOff;
-import pl.kania.etd.graph.CorrelationVectorCounter;
-import pl.kania.etd.graph.EdgeValue;
-import pl.kania.etd.graph.GraphGenerator;
+import pl.kania.etd.graph.*;
 import pl.kania.etd.graph.scc.StronglyConnectedComponentsFinder;
 import pl.kania.etd.graph.scc.StronglyConnectedComponentsWithEmergingTweetsFinder;
 import pl.kania.etd.io.CsvReader;
@@ -24,7 +22,9 @@ import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 import pl.kania.etd.periods.TimePeriods;
 
 import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @SpringBootApplication
 public class
 EmergingTopicDetectionApplication {
@@ -54,6 +54,7 @@ EmergingTopicDetectionApplication {
         EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
 
         TimePeriod period = periods.get(periods.size() - 1); // or pre-last and last
+        log.info("Preserved period: " + period.toString());
         periods.clear();
         Authors.getInstance().saveMemory();
         System.gc();
@@ -65,6 +66,8 @@ EmergingTopicDetectionApplication {
         period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
         AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
         List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
-        StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
+        Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
+        List<Graph<String, EdgeValue>> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
+        sortedTopics.size();
     }
 }

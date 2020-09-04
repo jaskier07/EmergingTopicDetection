@@ -5,13 +5,13 @@ import lombok.NoArgsConstructor;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mockito.internal.util.collections.Sets;
+import pl.kania.etd.content.Word;
 import pl.kania.etd.debug.Counter;
+import pl.kania.etd.periods.WordStatistics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GraphTestFactory {
@@ -123,7 +123,16 @@ public class GraphTestFactory {
         return Sets.newSet("2", "3", "5", "6", "7", "9");
     }
 
-    private static EdgeValue getEdgeValue(double val, double norm) {
-        return new EdgeValue(val / norm);
+    public static Map<String, WordStatistics> getSCCWordStatistics() {
+        Map<String, WordStatistics> statistics = new HashMap<>();
+        IntStream.range(1, 10).forEach(i -> addStatisticToMap(i, statistics));
+        return statistics;
+    }
+
+    private static void addStatisticToMap(int vertex, Map<String, WordStatistics> map) {
+        String word = Integer.toString(vertex);
+        WordStatistics wordStatistics = new WordStatistics(word);
+        wordStatistics.setEnergy(vertex);
+        map.put(word, wordStatistics);
     }
 }
