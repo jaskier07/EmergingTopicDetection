@@ -12,6 +12,7 @@ import pl.kania.etd.energy.NutritionCounter;
 import pl.kania.etd.graph.AdaptiveGraphEdgesCutOff;
 import pl.kania.etd.graph.CorrelationVectorCounter;
 import pl.kania.etd.graph.GraphGenerator;
+import pl.kania.etd.graph.StronglyConnectedComponentsFinder;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
 import pl.kania.etd.periods.TimePeriod;
@@ -61,6 +62,7 @@ EmergingTopicDetectionApplication {
         periods.forEach(period -> {
             period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
             AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
+            StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
         });
     }
 }
