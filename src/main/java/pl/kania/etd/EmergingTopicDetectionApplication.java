@@ -10,6 +10,8 @@ import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
 import pl.kania.etd.debug.Counter;
+import pl.kania.etd.debug.NumberFormatter;
+import pl.kania.etd.energy.AdaptiveEnergyThresholdSupplier;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
@@ -40,6 +42,7 @@ EmergingTopicDetectionApplication {
         String pathToDataset = environment.getProperty("pl.kania.path.dataset");
         int minClusterSize = Integer.parseInt(environment.getProperty("pl.kania.min-cluster-size"));
         int maxClusterSize = Integer.parseInt(environment.getProperty("pl.kania.max-cluster-size"));
+        boolean autoThreshold = Boolean.parseBoolean(environment.getProperty("pl.kania.threshold-energy-auto"));
 
         CsvReader reader = ctx.getBean(CsvReader.class);
         CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
@@ -49,15 +52,20 @@ EmergingTopicDetectionApplication {
         TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
         AuthoritySetter.setForAllAuthors();
-        periods = periods.subList(periods.size() - numPreviousPeriods, periods.size());
+//        periods = periods.subList(periods.size() - numPreviousPeriods, periods.size());
         periods.forEach(NutritionCounter::countNutritionInPeriod);
 
-        for (int periodIndex = periods.size() - 1; periodIndex >= 0; periodIndex--) {
-            EnergyCounter.count(periods, periodIndex, numPreviousPeriods);
+        for (int periodIndex = 0; periodIndex < periods.size(); periodIndex++) {
+            EnergyCounter.countAndSet(periods, periodIndex, numPreviousPeriods);
         }
-        EmergingWordSetter.setBasedOnThreshold(thresholdEnergy);
+        periods.forEach(period -> {
+            double threshold = autoThreshold ? AdaptiveEnergyThresholdSupplier.get(period.getWordStatistics().values()) : thresholdEnergy;
+            log.info("Threshold energy for period #" + period.getIndex() + ": " + NumberFormatter.format(threshold, 7));
+            period.setThresholdEnergy(threshold);
+        });
+        EmergingWordSetter.setBasedOnThreshold();
 
-        TimePeriod period = periods.get(periods.size() - 1 - 1); // or pre-last and last
+        TimePeriod period = periods.get(periods.size() - 1 - 1 - 1); // or pre-last and last
         log.info("Preserved period: " + period.toString());
         periods.clear();
         Authors.getInstance().saveMemory();
@@ -71,16 +79,17 @@ EmergingTopicDetectionApplication {
         AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
         List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
         Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
-        List<Graph<String, EdgeValue>> sortedGraphs = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
+        List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
 
-        sortedGraphs.forEach(AdaptiveGraphEdgesCutOff::perform);
-        sortedGraphs = GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedGraphs);
-        GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedGraphs, period.getWordStatistics());
+        sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
+        GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
+        GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
 
         log.warn("POPULAR TOPICS:");
         Counter ctr = new Counter();
-        sortedGraphs.forEach(g -> {
-            log.info("#" + ctr.getValue() + ": " + new Topic(g.vertexSet(), period).toString());
+        sortedTopics.forEach(topic -> {
+            ;
+            log.info("#" + ctr.getValue() + topic.toString(period));
             ctr.increment();
         });
     }

@@ -27,7 +27,7 @@ public class Tweet {
         this.author = author;
         this.content = new TweetContentPreprocessor().performPreprocessing(content);
         this.createdAt = createdAt;
-        this.words = ContentSplitter.splitIntoWords(content);
+        this.words = ContentSplitter.splitIntoWords(this.content);
         this.words.forEach(w -> w.setTweet(this));
     }
 

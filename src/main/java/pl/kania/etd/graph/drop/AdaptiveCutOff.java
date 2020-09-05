@@ -3,7 +3,6 @@ package pl.kania.etd.graph.drop;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -16,7 +15,7 @@ public class AdaptiveCutOff {
         Comparator<Double> comparator = Double::compareTo;
         elements.sort(comparator.reversed());
 
-        int indexInclusive = CriticalDropIndexSupplier.get(elements);
+        int indexInclusive = CriticalDropIndexSupplier.getIndex(elements);
         return elements.subList(0, indexInclusive);
     }
 
@@ -34,14 +33,13 @@ public class AdaptiveCutOff {
         Comparator<T> comparator = Comparator.<T, T>comparing(Function.identity()).reversed();
         elements.sort(comparator);
 
-        int indexInclusive = CriticalDropIndexSupplier.get(getSortedValues(elements));
+        int indexInclusive = CriticalDropIndexSupplier.getIndex(getValues(elements));
         return indexInclusive;
     }
 
-    private static <T extends HasValue> List<Double> getSortedValues(List<T> elements) {
+    private static <T extends HasValue> List<Double> getValues(List<T> elements) {
         return elements.stream()
                 .map(HasValue::getValue)
-                .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }
 }

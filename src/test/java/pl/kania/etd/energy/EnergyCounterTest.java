@@ -28,7 +28,7 @@ class EnergyCounterTest {
 
         List<TimePeriod> periods = Arrays.asList(timePeriod1, timePeriod2, timePeriod3);
         for (int periodIndex = periods.size() - 1; periodIndex >= 0; periodIndex--) {
-            EnergyCounter.count(periods, periodIndex, 2);
+            EnergyCounter.countAndSet(periods, periodIndex, 2);
         }
 
         Assertions.assertEquals(0., getWordEnergyInPeriod("dog", timePeriod1), DELTA);

@@ -9,6 +9,9 @@ import java.util.List;
 class AverageDropSupplier {
 
     static double getAverageDropInclusive(List<Drop> sortedDrops) {
+        if (sortedDrops.isEmpty()) {
+            return 0;
+        }
         return sortedDrops.stream()
                 .map(Drop::getValue)
                 .reduce(Double::sum)

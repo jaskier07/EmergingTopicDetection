@@ -3,6 +3,7 @@ package pl.kania.etd.graph;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jgrapht.Graph;
+import pl.kania.etd.content.Topic;
 import pl.kania.etd.energy.AverageCounter;
 import pl.kania.etd.periods.WordStatistics;
 
@@ -12,13 +13,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GraphSorter {
 
-    public static List<Graph<String, EdgeValue>> sortByEnergy(Set<Graph<String, EdgeValue>> graphs, Map<String, WordStatistics> wordStatistics) {
+    public static List<Topic> sortByEnergy(Set<Graph<String, EdgeValue>> graphs, Map<String, WordStatistics> wordStatistics) {
         Map<Graph<String, EdgeValue>, Double> energyPerGraph = new HashMap<>();
         graphs.forEach(graph -> energyPerGraph.put(graph, AverageCounter.count(getEnergy(graph, wordStatistics))));
         return energyPerGraph.entrySet()
                 .stream()
                 .sorted((g1, g2) -> -g1.getValue().compareTo(g2.getValue()))
-                .map(Map.Entry::getKey)
+                .map(e -> new Topic(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
 

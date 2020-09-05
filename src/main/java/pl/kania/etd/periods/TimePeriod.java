@@ -28,6 +28,8 @@ public class TimePeriod implements SavingMemory {
     private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
     @Setter
     private SimpleDirectedWeightedGraph<String, EdgeValue> correlationGraph;
+    @Setter
+    private double thresholdEnergy;
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;

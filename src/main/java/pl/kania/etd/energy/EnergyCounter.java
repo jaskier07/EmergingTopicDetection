@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnergyCounter {
 
-    public static void count(List<TimePeriod> periods, int currentPeriodIndex, int previousSlotsToConsider) {
+    public static void countAndSet(List<TimePeriod> periods, int currentPeriodIndex, int previousSlotsToConsider) {
         TimePeriod currentPeriod = periods.get(currentPeriodIndex);
 
         Set<String> words = currentPeriod.getWordStatistics().keySet();

@@ -1,0 +1,72 @@
+----------------------- Domyślny
+----------------------- Preprocessing tekstu
+----------------------- Niedzielenie hashtagów i nieudolne usuwanie numerów
+----------------------- Parę usprawnień
+[więcej wyników]
+2020-09-05 19:31:37.875  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #0: drop(0.00000), emergent %(  (0.00%) ), emergent(0)
+2020-09-05 19:31:37.880  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #1: drop(0.00000), emergent %(  (69.23%) ), emergent(18742)
+2020-09-05 19:31:37.884  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #2: drop(-0.00000), emergent %(  (81.80%) ), emergent(20685)
+2020-09-05 19:31:37.888  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #3: drop(-0.00000), emergent %(  (77.27%) ), emergent(21016)
+2020-09-05 19:31:37.891  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #4: drop(0.00030), emergent %(  (2.30%) ), emergent(673)
+2020-09-05 19:31:37.891  INFO 10248 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #5: drop(-0.01235), emergent %(  (69.19%) ), emergent(274)
+
+
+2020-09-05 19:34:35.831  INFO 10248 --- [           main] pl.kania.etd.graph.GraphFilter           : Cropping graphs bigger than 10: 
+2020-09-05 19:34:35.833  WARN 10248 --- [           main] p.k.e.EmergingTopicDetectionApplication  : POPULAR TOPICS:
+2020-09-05 19:34:35.836  INFO 10248 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #0[E: 0.0002] (vehicle, 0.001), (astounding, 0.000), (motor, 0.000), (adults, 0.000), (accident, -0.000)
+2020-09-05 19:34:35.836  INFO 10248 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #1[E: 0.0000] (absent, 0.000), (renamed, 0.000), (parasites, 0.000), (mag, 0.000), (inciting, 0.000)
+2020-09-05 19:34:35.837  INFO 10248 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #2[E: 0.0000] (partners, 0.000), (1/2, 0.000), (strongest, 0.000), (implemented, 0.000), (cr, -0.000), (undermine, -0.000), (messaging, -0.000)
+
+----------------------- Zmiana dropu z pierwszego największego spadku na ostatni 
+[bez zmian]
+2020-09-05 19:35:48.464  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #0: drop(0.00000), emergent %(  (0.00%) ), emergent(0)
+2020-09-05 19:35:48.470  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #1: drop(0.00000), emergent %(  (69.23%) ), emergent(18742)
+2020-09-05 19:35:48.473  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #2: drop(-0.00000), emergent %(  (81.80%) ), emergent(20685)
+2020-09-05 19:35:48.478  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #3: drop(-0.00000), emergent %(  (77.27%) ), emergent(21016)
+2020-09-05 19:35:48.482  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #4: drop(0.00030), emergent %(  (2.30%) ), emergent(673)
+2020-09-05 19:35:48.483  INFO 23736 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #5: drop(-0.01235), emergent %(  (69.19%) ), emergent(274)
+
+2020-09-05 19:37:54.982  WARN 23736 --- [           main] p.k.e.EmergingTopicDetectionApplication  : POPULAR TOPICS:
+2020-09-05 19:37:54.985  INFO 23736 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #0[E: 0.0002] (vehicle, 0.001), (astounding, 0.000), (motor, 0.000), (adults, 0.000), (accident, -0.000)
+2020-09-05 19:37:54.986  INFO 23736 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #1[E: 0.0000] (absent, 0.000), (renamed, 0.000), (parasites, 0.000), (mag, 0.000), (inciting, 0.000)
+2020-09-05 19:37:54.987  INFO 23736 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #2[E: 0.0000] (partners, 0.000), (1/2, 0.000), (strongest, 0.000), (implemented, 0.000), (cr, -0.000), 
+
+----------------------- wyjebanie numerów
+[w wynikach nie ma numerów, poza tym bez zmian]
+2020-09-05 19:44:20.836  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #0: 0.0000000
+2020-09-05 19:44:20.868  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #1: 0.0000000
+2020-09-05 19:44:20.898  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #2: 0.0006009
+2020-09-05 19:44:20.916  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #3: 0.0002963
+2020-09-05 19:44:20.937  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #4: 3.9718221
+2020-09-05 19:44:20.937  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #5: 0.0567090
+2020-09-05 19:44:20.955  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #0: drop(0.00000), emergent %(  (0.00%) ), emergent(0)
+2020-09-05 19:44:20.963  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #1: drop(0.00000), emergent %(  (69.28%) ), emergent(18349)
+2020-09-05 19:44:20.967  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #2: drop(-0.00000), emergent %(  (81.95%) ), emergent(20250)
+2020-09-05 19:44:20.971  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #3: drop(-0.00000), emergent %(  (77.44%) ), emergent(20613)
+2020-09-05 19:44:20.974  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #4: drop(0.00030), emergent %(  (2.24%) ), emergent(641)
+2020-09-05 19:44:20.975  INFO 3228 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #5: drop(-0.01313), emergent %(  (69.55%) ), emergent(265)
+2020-09-05 19:44:20.975  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Preserved period: #3 [2020-05-25T04:29:06, 2020-05-26T04:29:06]
+
+2020-09-05 19:46:20.977  WARN 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : POPULAR TOPICS:
+2020-09-05 19:46:20.980  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #0[E: 0.0002] (vehicle, 0.001), (astounding, 0.000), (motor, 0.000), (adults, 0.000), (accident, -0.000)
+2020-09-05 19:46:20.981  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #1[E: 0.0000] (absent, 0.000), (renamed, 0.000), (parasites, 0.000), (mag, 0.000), (inciting, 0.000)
+2020-09-05 19:46:20.982  INFO 3228 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #2[E: 0.0000] (partners, 0.000), (1/2, 0.000), (strongest, 0.000), (implemented, 0.000), (cr, -0.000), (undermine, -0.000), (messaging, -0.000)
+
+----------------------- sortowanie wartości przed przekazaniem do dropu
+2020-09-05 20:14:10.722  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #0: 0.0000000
+2020-09-05 20:14:10.750  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #1: 0.4967158
+2020-09-05 20:14:10.767  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #2: 0.0000000
+2020-09-05 20:14:10.781  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #3: 0.0004220
+2020-09-05 20:14:10.793  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #4: 0.0005778
+2020-09-05 20:14:10.803  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : Threshold energy for period #5: 0.0005522
+2020-09-05 20:14:10.814  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #0: drop(0.00000), emergent %(  (0.00%) ), emergent(0)
+2020-09-05 20:14:10.817  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #1: drop(0.00003), emergent %(  (3.83%) ), emergent(792)
+2020-09-05 20:14:10.820  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #2: drop(0.00000), emergent %(  (69.37%) ), emergent(15654)
+2020-09-05 20:14:10.822  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #3: drop(-0.00000), emergent %(  (72.69%) ), emergent(15737)
+2020-09-05 20:14:10.824  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #4: drop(-0.00000), emergent %(  (71.69%) ), emergent(14008)
+2020-09-05 20:14:10.826  INFO 7904 --- [           main] pl.kania.etd.energy.EmergingWordSetter   : Period #5: drop(0.00000), emergent %(  (16.94%) ), emergent(2978)
+
+2020-09-05 20:15:20.998  WARN 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : POPULAR TOPICS:
+2020-09-05 20:15:21.001  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #0[E: 0.0000] (throat, 0.000), (dramatic, 0.000), (blew, 0.000), (gma, 0.000), (coughing, 0.000)
+2020-09-05 20:15:21.002  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #1[E: 0.0000] (outlook, 0.000), (underrated, 0.000), (us-china, 0.000), (momentous, 0.000), (stellar, 0.000), (phones, 0.000), (aldrich, 0.000), (payroll, 0.000), (fitting, 0.000)
+2020-09-05 20:15:21.002  INFO 7904 --- [           main] p.k.e.EmergingTopicDetectionApplication  : #2[E: 0.0000] (farm, 0.000), (fruit, 0.000), (waste, 0.000), (vegetables, 0.000)

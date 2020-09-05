@@ -63,7 +63,7 @@ public class CorrelationVectorCounter {
         double expression2 = p.getTweetsContainingBothWords() * 1. / p.getTweetsContainingWord1();
         double expression3 = (p.getTweetsContainingWord2() * 1. - p.getTweetsContainingBothWords()) / (p.getAllTweets() - p.getTweetsContainingWord1());
 
-        double result = expression1 * (expression2 - expression3);
+        double result = expression1 * Math.abs((expression2 - expression3));
 
         return Double.isFinite(result) ? Optional.of(result) : Optional.empty();
     }

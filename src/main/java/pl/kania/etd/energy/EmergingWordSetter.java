@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.kania.etd.debug.Counter;
-import pl.kania.etd.debug.PercentageFormatter;
+import pl.kania.etd.debug.NumberFormatter;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.TimePeriods;
 import pl.kania.etd.periods.WordStatistics;
@@ -13,9 +13,9 @@ import pl.kania.etd.periods.WordStatistics;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmergingWordSetter {
 
-    public static void setBasedOnThreshold(double threshold) {
+    public static void setBasedOnThreshold() {
         TimePeriods.getInstance().getAllPeriods().forEach(period -> {
-            double dropInPeriod = threshold * sumEnergy(period) / allWordsInPeriod(period);
+            double dropInPeriod = period.getThresholdEnergy() * sumEnergy(period) / allWordsInPeriod(period);
 
             Counter ctr = new Counter();
             period.getWordStatistics().values().forEach(word -> {
@@ -25,8 +25,8 @@ public class EmergingWordSetter {
                 }
             });
 
-            log.info("Period #" + period.getIndex() + ": drop(" + dropInPeriod + "), emergent %( " +
-                    PercentageFormatter.format(ctr.getValue(), period.getWordStatistics().size()) + "), emergent(" + ctr.getValue() + ")");
+            log.info("Period #" + period.getIndex() + ": drop(" + NumberFormatter.format(dropInPeriod, 7) + "), emergent %( " +
+                    NumberFormatter.formatPercentage(ctr.getValue(), period.getWordStatistics().size()) + "), emergent(" + ctr.getValue() + ")");
         });
     }
 

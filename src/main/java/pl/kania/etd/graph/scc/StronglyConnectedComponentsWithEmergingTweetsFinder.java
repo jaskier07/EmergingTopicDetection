@@ -4,8 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import pl.kania.etd.debug.PercentageFormatter;
+import pl.kania.etd.debug.NumberFormatter;
 import pl.kania.etd.graph.EdgeValue;
 
 import java.util.HashSet;
@@ -31,7 +30,7 @@ public class StronglyConnectedComponentsWithEmergingTweetsFinder {
             return false;
         }).collect(Collectors.toSet());
 
-        log.info("Preserved graphs: " + preservedGraphs.size() + PercentageFormatter.format(preservedGraphs.size(), graphs.size()));
+        log.info("Preserved graphs: " + preservedGraphs.size() + NumberFormatter.formatPercentage(preservedGraphs.size(), graphs.size()));
         return preservedGraphs;
     }
 }

@@ -6,4 +6,9 @@ import lombok.Value;
 public class Drop {
     int lastIndex;
     double value;
+
+    @Override
+    public String toString() {
+        return Double.toString(value);
+    }
 }

@@ -3,6 +3,7 @@ package pl.kania.etd.graph;
 import org.jgrapht.Graph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.kania.etd.content.Topic;
 import pl.kania.etd.periods.WordStatistics;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ class GraphSorterTest {
                 GraphTestFactory.getSCCResult7_8()
         );
 
-        List<Graph<String, EdgeValue>> sortedGraphs = GraphSorter.sortByEnergy(new HashSet<>(graphs), statistics);
+        List<Topic> sortedGraphs = GraphSorter.sortByEnergy(new HashSet<>(graphs), statistics);
 
         List<Graph<String, EdgeValue>> graphsExpected = Arrays.asList(
                 GraphTestFactory.getSCCResult7_8(),
@@ -32,7 +33,7 @@ class GraphSorterTest {
         );
 
         for (int i = 0; i < graphsExpected.size(); i++) {
-            Assertions.assertEquals(GraphTestUtils.getEdgeValues(graphsExpected.get(i)), GraphTestUtils.getEdgeValues(sortedGraphs.get(i)));
+            Assertions.assertEquals(GraphTestUtils.getEdgeValues(graphsExpected.get(i)), GraphTestUtils.getEdgeValues(sortedGraphs.get(i).getGraph()));
         }
     }
 
