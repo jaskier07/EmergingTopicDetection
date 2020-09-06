@@ -2,13 +2,13 @@ package pl.kania.etd.author;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import pl.kania.etd.SavingMemory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Authors implements SavingMemory {
 
@@ -43,5 +43,14 @@ public class Authors implements SavingMemory {
     @Override
     public void saveMemory() {
         authors.clear();
+    }
+
+    public void printMostImportantAuthors() {
+        log.info("MOST IMPORTANT AUTHORS:");
+        log.info(authors.values().stream()
+                .sorted(Comparator.comparing(Author::getAuthority).reversed())
+                .limit(10)
+                .map(a -> a.getUsername() + ": " + a.getAuthority())
+                .collect(Collectors.joining("\n")));
     }
 }

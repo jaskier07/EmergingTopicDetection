@@ -13,18 +13,11 @@ public class AuthoritySetter {
 
         Authors authors = Authors.getInstance();
 
-        int maxFollowersCount = getMaxFollowersCount(authors);
         authors.getAllAuthors().forEach(author -> {
-            author.setAuthority(1. * author.getFollowers() / maxFollowersCount);
+            double value = AuthorityCounter.countBasedOnANTF(author, authors.getAllAuthors());
+            author.setAuthority(value);
         });
 
         log.info("Done.");
-    }
-
-    private static int getMaxFollowersCount(Authors authors) {
-        return authors.getAllAuthors().stream()
-                .map(Author::getFollowers)
-                .max(Integer::compareTo)
-                .orElseThrow(() -> new IllegalStateException("Error finding author with max followers"));
     }
 }

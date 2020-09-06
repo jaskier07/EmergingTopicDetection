@@ -6,16 +6,11 @@ import pl.kania.etd.author.Author;
 import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Tweet;
-import pl.kania.etd.content.Word;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.WordStatistics;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class NutritionCounterTest {
 
@@ -36,10 +31,12 @@ class NutritionCounterTest {
         timePeriod.addTweet(tweet2);
         timePeriod.addTweet(tweet3);
 
-        NutritionCounter.countNutritionInPeriod(timePeriod);
+        NutritionCounter.countAndSetNutritionInPeriod(timePeriod);
         Map<String, WordStatistics> wordStatistics = timePeriod.getWordStatistics();
 
-        Assertions.assertEquals(2.375, wordStatistics.get("nothing").getNutrition(), DELTA);
-        Assertions.assertEquals(1.5, wordStatistics.get("doing").getNutrition(), DELTA);
+        double auth1 = 0.5 + 0.5 * 1;
+        double auth2 = 0.5 + 0.5 * 0.5;
+        Assertions.assertEquals(auth1 * (1 + 1) + auth2 * 0.75, wordStatistics.get("nothing").getNutrition(), DELTA);
+        Assertions.assertEquals(auth1 * 1 + auth2 * 1, wordStatistics.get("doing").getNutrition(), DELTA);
     }
 }

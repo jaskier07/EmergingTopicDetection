@@ -9,16 +9,19 @@ import java.util.NoSuchElementException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AugmentedNormalizedTermFrequencyCounter {
 
-    public static double count(String word, Map<String, Integer> wordFrequencies) {
+    public static<T> double count(T word, Map<T, Integer> wordFrequencies) {
         int wordFrequency = wordFrequencies.get(word);
         int highestFrequency = getHighestFrequency(wordFrequencies);
+        if (highestFrequency == 0) {
+            return 0;
+        }
         return 0.5 + 0.5 * (1. * wordFrequency / highestFrequency);
     }
 
-    private static int getHighestFrequency(Map<String, Integer> wordFrequencies) {
+    private static<T> int getHighestFrequency(Map<T, Integer> wordFrequencies) {
         return wordFrequencies.values()
                 .stream()
                 .max(Integer::compareTo)
-                .orElseThrow(() -> new NoSuchElementException("Error finding highest frequency"));
+                .orElse(0);
     }
 }

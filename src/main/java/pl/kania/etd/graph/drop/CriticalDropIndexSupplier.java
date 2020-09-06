@@ -24,7 +24,7 @@ public class CriticalDropIndexSupplier {
         return CriticalDropSupplier.getIndexInclusive(dropsInRange, averageDrop);
     }
 
-    public static double getValue(Collection<Double> values) {
+    public static <T extends HasValue>double getValue(Collection<T> values) {
         List<Double> sortedValues = values.stream()
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());

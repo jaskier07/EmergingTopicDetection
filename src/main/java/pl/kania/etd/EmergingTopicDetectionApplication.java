@@ -11,7 +11,7 @@ import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
 import pl.kania.etd.debug.Counter;
 import pl.kania.etd.debug.NumberFormatter;
-import pl.kania.etd.energy.AdaptiveEnergyThresholdSupplier;
+import pl.kania.etd.debug.ProgressLogger;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
@@ -52,20 +52,21 @@ EmergingTopicDetectionApplication {
         TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
         AuthoritySetter.setForAllAuthors();
-//        periods = periods.subList(periods.size() - numPreviousPeriods, periods.size());
-        periods.forEach(NutritionCounter::countNutritionInPeriod);
+        Authors.getInstance().printMostImportantAuthors();
+        periods.forEach(NutritionCounter::countAndSetNutritionInPeriod);
 
         for (int periodIndex = 0; periodIndex < periods.size(); periodIndex++) {
             EnergyCounter.countAndSet(periods, periodIndex, numPreviousPeriods);
         }
         periods.forEach(period -> {
-            double threshold = autoThreshold ? AdaptiveEnergyThresholdSupplier.get(period.getWordStatistics().values()) : thresholdEnergy;
-            log.info("Threshold energy for period #" + period.getIndex() + ": " + NumberFormatter.format(threshold, 7));
-            period.setThresholdEnergy(threshold);
+            if (autoThreshold) {
+                EmergingWordSetter.setBasedOnThreshold(period, thresholdEnergy);
+            } else {
+                EmergingWordSetter.setBasedOnCriticalDrop(period.getWordStatistics().values(), period.getIndex());
+            }
         });
-        EmergingWordSetter.setBasedOnThreshold();
 
-        TimePeriod period = periods.get(periods.size() - 1 - 1 - 1); // or pre-last and last
+        TimePeriod period = periods.get(periods.size() - 1 - 1); // or pre-last and last
         log.info("Preserved period: " + period.toString());
         periods.clear();
         Authors.getInstance().saveMemory();
@@ -82,6 +83,7 @@ EmergingTopicDetectionApplication {
         List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
 
         sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
+        new ProgressLogger().done();
         GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
         GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
 

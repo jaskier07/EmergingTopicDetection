@@ -18,7 +18,7 @@ public class NutritionCounter {
     /**
      * NUTRITION = for each tweet containing word in a time period sum (word weight in a tweet * tweet's user authority)
      */
-    public static void countNutritionInPeriod(TimePeriod period) {
+    public static void countAndSetNutritionInPeriod(TimePeriod period) {
         Map<String, List<Word>> wordOccurrences = getWordOccurrences(period.getWords());
         wordOccurrences.forEach((key, value) -> {
             double wordNutrition = value.stream()
