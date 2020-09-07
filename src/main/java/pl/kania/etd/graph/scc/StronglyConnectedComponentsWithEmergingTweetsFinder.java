@@ -22,7 +22,7 @@ public class StronglyConnectedComponentsWithEmergingTweetsFinder {
             for (String word : g.vertexSet()) {
                 if (emergingWords.contains(word)) {
                     foundEmergingWords.add(word);
-                    if (foundEmergingWords.size() > 1) {
+                    if (foundEmergingWords.size() > 0) {
                         return true;
                     }
                 }

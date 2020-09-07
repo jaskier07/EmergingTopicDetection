@@ -25,8 +25,8 @@ public class GraphGenerator {
                 if (value != 0 && norm != 0) {
                     graph.addEdge(word, word2, new EdgeValue(value / norm));
                 }
-                pl.log(50000);
             });
+            pl.log(100);
         });
 
         pl.done("Generating graph");

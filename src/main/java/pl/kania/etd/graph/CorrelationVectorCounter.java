@@ -2,7 +2,6 @@ package pl.kania.etd.graph;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import pl.kania.etd.debug.Counter;
 import pl.kania.etd.debug.ProgressLogger;
 import pl.kania.etd.periods.Cooccurrence;
 import pl.kania.etd.periods.TimePeriod;
@@ -51,7 +50,7 @@ public class CorrelationVectorCounter {
     }
 
     public static Optional<Double> countCorrelation(Parameters p) {
-        if (!p.isDataValid()) {
+        if (!p.areValid()) {
             return Optional.empty();
         }
 
@@ -101,7 +100,7 @@ public class CorrelationVectorCounter {
          */
         long allTweets;
 
-        boolean isDataValid() {
+        boolean areValid() {
             return tweetsContainingBothWords != 0;
         }
     }

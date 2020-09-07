@@ -29,9 +29,12 @@ public class GraphTestFactory {
     private static void addEdges(SimpleDirectedWeightedGraph<String, EdgeValue> graph) {
         List<Double[]> graphMatrix = getGraphMatrix();
         List<Double> norms = new ArrayList<>();
-        graphMatrix.forEach(vector -> {
-            norms.add(EuclideanNormSupplier.get(Arrays.asList(vector)));
-        });
+
+        for (int i = 0; i < graphMatrix.size(); i++) {
+            List<Double> values =  Arrays.stream(graphMatrix.get(i)).collect(Collectors.toList());
+            values.remove(graphMatrix.get(i)[i]);
+            norms.add(EuclideanNormSupplier.get(values));
+        }
 
         for (int i = 0; i < norms.size(); i++) {
             for (int j = 0; j < norms.size(); j++) {

@@ -24,6 +24,8 @@ public class GraphSorter {
     }
 
     private static List<Double> getEnergy(Graph<String, EdgeValue> graph, Map<String, WordStatistics> wordStatistics) {
-        return graph.vertexSet().stream().map(word -> wordStatistics.get(word).getEnergy()).collect(Collectors.toList());
+        return graph.vertexSet().stream()
+                .map(word -> wordStatistics.get(word).getEnergy())
+                .collect(Collectors.toList());
     }
 }
