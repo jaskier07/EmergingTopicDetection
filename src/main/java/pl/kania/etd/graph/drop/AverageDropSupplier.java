@@ -8,7 +8,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class AverageDropSupplier {
 
-    static double getAverageDropInclusive(List<Drop> sortedDrops) {
+    static <T extends HasValue<T>>double getAverageDropInclusive(List<Drop<T>> sortedDrops) {
         if (sortedDrops.isEmpty()) {
             return 0;
         }

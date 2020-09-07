@@ -8,14 +8,14 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class MaximumDropSupplier {
 
-    public static int getMaximumDropIndexInclusive(List<Drop> drops) {
+    public static <T extends HasValue<T>>int getMaximumDropIndexInclusive(List<Drop<T>> drops) {
         double max = Double.MIN_VALUE;
         int maxDropIndex = 0;
 
-        for (Drop drop : drops) {
+        for (Drop<T> drop : drops) {
             if (max < drop.getValue()) {
                 max = drop.getValue();
-                maxDropIndex = drop.getLastIndex() - 1;
+                maxDropIndex = drop.getDropIndex();
             }
         }
 

@@ -1,22 +1,30 @@
 package pl.kania.etd.graph.drop;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.stream.Collectors;
 
 class DropsProviderTest {
 
-    @Test
-    void givenValuesSortThemAndFindDifferencesBetweenNeighbours() {
-        List<Double> values = DropTestFactory.getValues();
-        List<Drop> drops = DropsProvider.getDrops(values);
-        List<Drop> expectedDrops = DropTestFactory.getDrops();
+    @ParameterizedTest
+    @EnumSource(value = TestSet.class)
+    <T extends HasValue<T>> void givenValuesSortThemAndFindDifferencesBetweenNeighbours(TestSet testSet) {
+        DropTestFactory factory = new DropTestFactory(testSet);
+        List<SimpleDoubleValue> values = factory.getValues().stream()
+                .map(SimpleDoubleValue::new)
+                .collect(Collectors.toList());
+        List<Drop<SimpleDoubleValue>> drops = DropsProvider.getDrops(values);
+        List<Drop<SimpleDoubleValue>> expectedDrops = factory.getDrops();
 
-        Assertions.assertEquals(expectedDrops, drops);
+        Assertions.assertEquals(expectedDrops.size(), drops.size());
+        for (int i = 0; i < drops.size(); i++) {
+            Assertions.assertEquals(expectedDrops.get(i).getValue(), drops.get(i).getValue());
+        }
     }
 
 }

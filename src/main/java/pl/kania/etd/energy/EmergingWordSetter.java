@@ -34,10 +34,12 @@ public class EmergingWordSetter {
     }
 
     public static void setBasedOnCriticalDrop(Collection<WordStatistics> statistics, int periodIndex) {
-        List<WordStatistics> preservedElements = AdaptiveCutOff.getPreservedElements(new ArrayList<>(statistics));
-        preservedElements.forEach(w -> w.setEmerging(true));
-        log.info("Emerging words in period #" + periodIndex + ": " + NumberFormatter.formatPercentage(preservedElements.size(), statistics.size())
-                + "(" + preservedElements.size() + "/" + statistics.size() + ")");
+        AdaptiveCutOff.performActionForElementsBeforeCriticalDrop(statistics, list -> list.forEach(w -> w.setEmerging(true)));
+        long emergingCount = statistics.stream()
+                .filter(WordStatistics::isEmerging)
+                .count();
+        log.info("Emerging words in period #" + periodIndex + ": " + NumberFormatter.formatPercentage(emergingCount, statistics.size())
+                + "(" + emergingCount + "/" + statistics.size() + ")");
     }
 
     private static double sumEnergy(TimePeriod period) {

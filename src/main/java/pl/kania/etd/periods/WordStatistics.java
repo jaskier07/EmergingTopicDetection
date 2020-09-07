@@ -4,13 +4,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
+import pl.kania.etd.graph.drop.HasValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @EqualsAndHashCode(of = "word")
-public class WordStatistics {
+public class WordStatistics implements HasValue<WordStatistics> {
     private final String word;
     private int tweets = 1;
     @Setter
@@ -29,4 +30,16 @@ public class WordStatistics {
         tweets += 1;
     }
 
+    @Override
+    public double getValue() {
+        return energy;
+    }
+
+    @Override
+    public int compareTo(WordStatistics o) {
+        if (o == null) {
+            return -1;
+        }
+        return Double.compare(energy, o.getEnergy());
+    }
 }

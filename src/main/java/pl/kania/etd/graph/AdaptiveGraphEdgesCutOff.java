@@ -16,13 +16,14 @@ import java.util.Set;
 public class AdaptiveGraphEdgesCutOff {
 
     public static void perform(Graph<String, EdgeValue> graph) {
+        ProgressLogger pl = new ProgressLogger("Cutting off edges");
         graph.vertexSet()
                 .forEach(word -> {
                             Set<EdgeValue> edges = graph.outgoingEdgesOf(word);
-                            List<EdgeValue> removedEdges = AdaptiveCutOff.getRemovedElements(new ArrayList<>(edges));
-                            graph.removeAllEdges(removedEdges);
+                            AdaptiveCutOff.performActionForElementsAfterCriticalDrop(edges, graph::removeAllEdges);
+                            pl.log();
                         }
                 );
-        new ProgressLogger().log(1);
+        pl.done();
     }
 }

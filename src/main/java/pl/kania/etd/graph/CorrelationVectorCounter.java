@@ -40,7 +40,7 @@ public class CorrelationVectorCounter {
                     putRecordToCorrelationVector(period, word2, word1, correlation);
                 }
             }
-            pl.log(300);
+            pl.log(200);
         }
 
         pl.done("period #" + period.getIndex());

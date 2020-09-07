@@ -9,4 +9,14 @@ public class Counter {
     public void increment() {
         value++;
     }
+
+    public int getValueAndIncrement() {
+        int val = value;
+        increment();
+        return val;
+    }
+
+    public String getValueAsStringAndIncrement() {
+        return Integer.toString(getValueAndIncrement());
+    }
 }

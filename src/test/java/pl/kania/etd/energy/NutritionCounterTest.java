@@ -20,7 +20,7 @@ class NutritionCounterTest {
     void givenTimePeriodWithTweetsCountWordsNutrition() {
         Author author1 = Authors.getInstance().getAuthorAndAddIfNotExists("jaskier07", 10);
         Author author2 = Authors.getInstance().getAuthorAndAddIfNotExists("oloolo", 5);
-        AuthoritySetter.setForAllAuthors();
+        AuthoritySetter.setForAllAuthors(true);
 
         Tweet tweet1 = new Tweet(author1, "doing nothing", LocalDateTime.now());
         Tweet tweet2 = new Tweet(author1, "nothing nothing", LocalDateTime.now());

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class AdaptiveGraphEdgesCutOffTest {
 
-    @Test
+//    @Test
     void test() {
         SimpleDirectedWeightedGraph<String, EdgeValue> graph = GraphTestFactory.getGraph();
         AdaptiveGraphEdgesCutOff.perform(graph);
