@@ -22,6 +22,5 @@ public class AdaptiveGraphEdgesCutOff {
                             AdaptiveCutOff.performActionForElementsAfterCriticalDrop(edges, graph::removeAllEdges);
                         }
                 );
-        new ProgressLogger().log(1);
     }
 }

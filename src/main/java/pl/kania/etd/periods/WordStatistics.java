@@ -6,12 +6,13 @@ import lombok.Setter;
 import lombok.Value;
 import pl.kania.etd.graph.drop.HasValue;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @EqualsAndHashCode(of = "word")
-public class WordStatistics implements HasValue<WordStatistics> {
+public class WordStatistics implements Serializable, HasValue<WordStatistics> {
     private final String word;
     private int tweets = 1;
     @Setter

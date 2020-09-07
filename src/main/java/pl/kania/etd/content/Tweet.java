@@ -7,15 +7,16 @@ import pl.kania.etd.content.preproc.TweetContentPreprocessor;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.author.Author;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @EqualsAndHashCode(of = "id")
-public class Tweet {
+public class Tweet implements Serializable {
     private final String id;
-    private final Author author;
+    private transient final Author author;
     private final String content;
     private final LocalDateTime createdAt;
     @Setter

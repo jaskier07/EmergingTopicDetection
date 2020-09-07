@@ -20,11 +20,15 @@ import pl.kania.etd.graph.scc.StronglyConnectedComponentsFinder;
 import pl.kania.etd.graph.scc.StronglyConnectedComponentsWithEmergingTweetsFinder;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
+import pl.kania.etd.io.serialization.FilenameProvider;
+import pl.kania.etd.io.serialization.SerializationService;
+import pl.kania.etd.io.serialization.SerializationState;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.TimePeriodGenerator;
 import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 import pl.kania.etd.periods.TimePeriods;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,34 +48,49 @@ EmergingTopicDetectionApplication {
         int maxClusterSize = Integer.parseInt(environment.getProperty("pl.kania.max-cluster-size"));
         boolean autoThreshold = Boolean.parseBoolean(environment.getProperty("pl.kania.threshold-energy-auto"));
         boolean authorityAugmented = Boolean.parseBoolean(environment.getProperty("pl.kania.authority-augmented"));
+        boolean loadState = Boolean.parseBoolean(environment.getProperty("pl.kania.load-state"));
+        String pathToDeserialization = environment.getProperty("pl.kania.path.deserialization");
 
-        CsvReader reader = ctx.getBean(CsvReader.class);
-        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
+        List<TimePeriod> periods;
+        int chosenPeriodIndex;
 
-        List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
-        TimePeriods.getInstance().addPeriods(periods);
-        TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
+        if (loadState) {
+            SerializationState state = new SerializationService().deserializeCurrentState(pathToDeserialization);
+            periods = state.getPeriods();
+            chosenPeriodIndex = state.getChosenPeriodIndex();
+        } else {
+            CsvReader reader = ctx.getBean(CsvReader.class);
+            CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
 
-        AuthoritySetter.setForAllAuthors(authorityAugmented);
-        Authors.getInstance().printMostImportantAuthors();
-        periods.forEach(NutritionCounter::countAndSetNutritionInPeriod);
+            periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
+            TimePeriods.getInstance().addPeriods(periods);
+            TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
-        for (int periodIndex = 0; periodIndex < periods.size(); periodIndex++) {
-            EnergyCounter.countAndSet(periods, periodIndex, numPreviousPeriods);
-        }
-        periods.forEach(period -> {
-            if (autoThreshold) {
-                EmergingWordSetter.setBasedOnThreshold(period, thresholdEnergy);
-            } else {
-                EmergingWordSetter.setBasedOnCriticalDrop(period.getWordStatistics().values(), period.getIndex());
+            AuthoritySetter.setForAllAuthors(authorityAugmented);
+            Authors.getInstance().printMostImportantAuthors();
+            periods.forEach(NutritionCounter::countAndSetNutritionInPeriod);
+
+            for (int periodIndex = 0; periodIndex < periods.size(); periodIndex++) {
+                EnergyCounter.countAndSet(periods, periodIndex, numPreviousPeriods);
             }
-        });
+            periods.forEach(period -> {
+                if (autoThreshold) {
+                    EmergingWordSetter.setBasedOnThreshold(period, thresholdEnergy);
+                } else {
+                    EmergingWordSetter.setBasedOnCriticalDrop(period.getWordStatistics().values(), period.getIndex());
+                }
+            });
 
-        TimePeriod period = periods.get(periods.size() - 1 - 1 - 1); // or pre-last and last
+            Authors.getInstance().saveMemory();
+            periods.forEach(TimePeriod::dropRareWords);
+
+//            new SerializationService().serializeCurrentState(new SerializationState(periods, minClusterSize, maxClusterSize, periods.size() - 1 - 1 - 1), FilenameProvider.get());
+            chosenPeriodIndex = periods.size() - 1 - 1;
+        }
+
+        TimePeriod period = periods.get(chosenPeriodIndex); // or pre-last and last
         log.info("Preserved period: " + period.toString());
-        period.dropRareWords();
         periods.clear();
-        Authors.getInstance().saveMemory();
         System.gc();
 
         CorrelationVectorCounter.countCorrelationAndFillWords(period);

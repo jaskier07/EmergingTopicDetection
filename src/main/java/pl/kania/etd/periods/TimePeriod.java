@@ -10,13 +10,15 @@ import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 import pl.kania.etd.graph.EdgeValue;
 
+import java.beans.Transient;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(of = "id")
-public class TimePeriod implements SavingMemory {
+public class TimePeriod implements SavingMemory, Serializable {
 
     private final String id;
     private final int index;
@@ -27,7 +29,7 @@ public class TimePeriod implements SavingMemory {
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
     private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
     @Setter
-    private SimpleDirectedWeightedGraph<String, EdgeValue> correlationGraph;
+    private transient SimpleDirectedWeightedGraph<String, EdgeValue> correlationGraph;
     @Setter
     private double thresholdEnergy;
 

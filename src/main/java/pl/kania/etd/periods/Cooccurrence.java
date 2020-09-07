@@ -4,9 +4,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
 
+import java.io.Serializable;
+
 @Getter
 @EqualsAndHashCode(of = {"word1", "word2"})
-public class Cooccurrence {
+public class Cooccurrence implements Serializable {
     private final String word1;
     private final String word2;
 

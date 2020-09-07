@@ -4,11 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @EqualsAndHashCode(of = "id")
-public class Word implements Comparable<Word> {
+public class Word implements Serializable, Comparable<Word> {
 
     private final String id = UUID.randomUUID().toString();
     private final String word;
