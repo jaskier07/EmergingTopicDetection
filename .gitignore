@@ -40,3 +40,4 @@ src/main/resources/*.csv
 ./.mvn/wrapper/*
 *.properties
 *.jar
+*.txt
