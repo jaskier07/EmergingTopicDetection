@@ -67,8 +67,9 @@ EmergingTopicDetectionApplication {
             }
         });
 
-        TimePeriod period = periods.get(periods.size() - 1 - 1); // or pre-last and last
+        TimePeriod period = periods.get(periods.size() - 1 - 1 - 1); // or pre-last and last
         log.info("Preserved period: " + period.toString());
+        period.dropRareWords();
         periods.clear();
         Authors.getInstance().saveMemory();
         System.gc();

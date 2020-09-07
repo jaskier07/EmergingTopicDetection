@@ -49,6 +49,15 @@ public class TimePeriod implements SavingMemory {
         words.clear();
     }
 
+    public void dropRareWords() {
+        Set<String> wordsToDrop = wordStatistics.entrySet().stream()
+                .filter(e -> e.getValue().getTweets() == 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+        words.removeIf(w -> wordsToDrop.contains(w.getWord()));
+        wordStatistics.entrySet().removeIf(w -> wordsToDrop.contains(w.getKey()));
+    }
+
     public void addTweet(Tweet tweet) {
         tweets.add(tweet);
         words.addAll(tweet.getWords());
