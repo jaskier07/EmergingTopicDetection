@@ -43,6 +43,7 @@ EmergingTopicDetectionApplication {
         int minClusterSize = Integer.parseInt(environment.getProperty("pl.kania.min-cluster-size"));
         int maxClusterSize = Integer.parseInt(environment.getProperty("pl.kania.max-cluster-size"));
         boolean autoThreshold = Boolean.parseBoolean(environment.getProperty("pl.kania.threshold-energy-auto"));
+        boolean authorityAugmented = Boolean.parseBoolean(environment.getProperty("pl.kania.authority-augmented"));
 
         CsvReader reader = ctx.getBean(CsvReader.class);
         CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
@@ -51,7 +52,7 @@ EmergingTopicDetectionApplication {
         TimePeriods.getInstance().addPeriods(periods);
         TimePeriodInTweetsSetter.setTimePeriod(csvReaderResult.getTweetSet());
 
-        AuthoritySetter.setForAllAuthors();
+        AuthoritySetter.setForAllAuthors(authorityAugmented);
         Authors.getInstance().printMostImportantAuthors();
         periods.forEach(NutritionCounter::countAndSetNutritionInPeriod);
 
@@ -90,7 +91,6 @@ EmergingTopicDetectionApplication {
         log.warn("POPULAR TOPICS:");
         Counter ctr = new Counter();
         sortedTopics.forEach(topic -> {
-            ;
             log.info("#" + ctr.getValue() + topic.toString(period));
             ctr.increment();
         });

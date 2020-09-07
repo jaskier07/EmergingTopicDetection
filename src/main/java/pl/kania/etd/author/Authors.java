@@ -50,7 +50,7 @@ public class Authors implements SavingMemory {
         log.info(authors.values().stream()
                 .sorted(Comparator.comparing(Author::getAuthority).reversed())
                 .limit(10)
-                .map(a -> a.getUsername() + ": " + a.getAuthority())
+                .map(a -> a.getUsername() + ": " + a.getAuthority() + ", " + a.getFollowers())
                 .collect(Collectors.joining("\n")));
     }
 }

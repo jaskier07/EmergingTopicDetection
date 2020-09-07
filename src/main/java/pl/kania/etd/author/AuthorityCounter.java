@@ -12,21 +12,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorityCounter {
 
-    public static double countBasedOnANTF(Author author, Collection<Author> authors) {
-        Map<Author, Integer> followersPerAuthor = authors.stream()
-                .collect(Collectors.toMap(Function.identity(), Author::getFollowers));
+    public static double countBasedOnANTF(Author author, Map<Author, Integer> followersPerAuthor) {
         return AugmentedNormalizedTermFrequencyCounter.count(author, followersPerAuthor);
     }
 
-    public static double countBasedOnFollowers(Author author, Collection<Author> authors) {
-        int maxFollowersCount = getMaxFollowersCount(authors);
+    public static double countBasedOnFollowers(Author author, int maxFollowersCount) {
         return 1. * author.getFollowers() / maxFollowersCount;
-    }
-
-    private static int getMaxFollowersCount(Collection<Author> authors) {
-        return authors.stream()
-                .map(Author::getFollowers)
-                .max(Integer::compareTo)
-                .orElseThrow(() -> new IllegalStateException("Error finding author with max followers"));
     }
 }
