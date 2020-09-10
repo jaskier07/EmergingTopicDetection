@@ -9,7 +9,7 @@ public class TweetContentPreprocessor {
         content = ShortcutReplacer.replace(content);
 //        content = HashtagReplacer.replace(content);
         content = LinkRemover.remove(content);
-        content = SpecialCharactersRemover.remove(content);
+//        content = SpecialCharactersRemover.remove(content);
 //        content = NumberRemover.remove(content);
         return content;
     }

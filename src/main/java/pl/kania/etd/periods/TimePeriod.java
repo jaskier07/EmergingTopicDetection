@@ -40,7 +40,11 @@ public class TimePeriod implements SavingMemory {
 
     @Override
     public String toString() {
-        return "#" + index + " [" + (startTime == null ? "?" : startTime.toString()) + ", " + (endTime == null ? "?" : endTime.toString()) + "]";
+        return "#" + index + getTimeRange();
+    }
+
+    public String getTimeRange() {
+        return " [" + (startTime == null ? "?" : startTime.toString()) + ", " + (endTime == null ? "?" : endTime.toString()) + "]";
     }
 
     @Override

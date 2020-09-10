@@ -41,3 +41,4 @@ src/main/resources/*.csv
 *.properties
 *.jar
 *.txt
+*.csv

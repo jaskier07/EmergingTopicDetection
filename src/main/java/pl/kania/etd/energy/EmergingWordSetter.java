@@ -30,7 +30,7 @@ public class EmergingWordSetter {
         });
 
         log.info("Period #" + period.getIndex() + ": drop(" + NumberFormatter.format(dropInPeriod, 7) + "), emergent %( " +
-                NumberFormatter.formatPercentage(ctr.getValue(), period.getWordStatistics().size()) + "), emergent(" + ctr.getValue() + ")");
+                NumberFormatter.formatPercentage(ctr.getValue(), period.getWordStatistics().size()) + "), emergent(" + ctr.getValue() + ") " + period.getTimeRange());
     }
 
     public static void setBasedOnCriticalDrop(Collection<WordStatistics> statistics, int periodIndex) {

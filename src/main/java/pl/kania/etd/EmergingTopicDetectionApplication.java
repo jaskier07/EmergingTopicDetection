@@ -20,12 +20,14 @@ import pl.kania.etd.graph.scc.StronglyConnectedComponentsFinder;
 import pl.kania.etd.graph.scc.StronglyConnectedComponentsWithEmergingTweetsFinder;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
+import pl.kania.etd.io.IntReader;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.TimePeriodGenerator;
 import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 import pl.kania.etd.periods.TimePeriods;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 @Slf4j
@@ -67,33 +69,39 @@ EmergingTopicDetectionApplication {
             }
         });
 
-        TimePeriod period = periods.get(periods.size() - 1 - 1 - 1); // or pre-last and last
-        log.info("Preserved period: " + period.toString());
-        period.dropRareWords();
-        periods.clear();
-        Authors.getInstance().saveMemory();
-        System.gc();
+        periods.forEach(TimePeriod::dropRareWords);
+        int periodIndex = new IntReader().read();
+        while (periodIndex != -1) {
+            TimePeriod period = periods.get(periodIndex);
+            log.info("Preserved period: " + period.toString());
+//            period.dropRareWords();
+//            periods.clear();
+            Authors.getInstance().saveMemory();
+            System.gc();
 
-        CorrelationVectorCounter.countCorrelationAndFillWords(period);
-        period.saveMemory();
-        System.gc();
+            CorrelationVectorCounter.countCorrelationAndFillWords(period);
+//            period.saveMemory();
+//            System.gc();
 
-        period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
-        AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
-        List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
-        Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
-        List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
+            period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
+            AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
+            List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
+            Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
+            List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
 
-        sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
-        new ProgressLogger().done();
-        GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
-        GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
+            sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
+            new ProgressLogger().done();
+            GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
+            GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
 
-        log.warn("POPULAR TOPICS:");
-        Counter ctr = new Counter();
-        sortedTopics.forEach(topic -> {
-            log.info("#" + ctr.getValue() + topic.toString(period));
-            ctr.increment();
-        });
+            log.warn("POPULAR TOPICS:");
+            Counter ctr = new Counter();
+            sortedTopics.forEach(topic -> {
+                log.info("#" + ctr.getValue() + topic.toString(period));
+                ctr.increment();
+            });
+
+            periodIndex = new IntReader().read();
+        }
     }
 }
