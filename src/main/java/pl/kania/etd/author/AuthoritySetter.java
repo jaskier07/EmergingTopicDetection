@@ -3,6 +3,7 @@ package pl.kania.etd.author;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pl.kania.etd.content.AugmentedNormalizedTermFrequencyCounter;
 import pl.kania.etd.debug.ProgressLogger;
 
 import java.util.Collection;
@@ -18,15 +19,13 @@ public class AuthoritySetter {
         ProgressLogger pl = new ProgressLogger("Setting authors' authority");
 
         Authors authors = Authors.getInstance();
-        Map<Author, Integer> followersPerAuthor = authors.getAllAuthors().stream()
-                .collect(Collectors.toMap(Function.identity(), Author::getFollowers));
         int maxFollowersCount = getMaxFollowersCount(authors.getAllAuthors());
 
         authors.getAllAuthors().forEach(author -> {
             double value;
             if (authorityAugmented) {
-                value=AuthorityCounter.countBasedOnANTF(author, followersPerAuthor);
-            }  else {
+                value = AuthorityCounter.countBasedOnANTF(author.getFollowers(), maxFollowersCount);
+            } else {
                 value = AuthorityCounter.countBasedOnFollowers(author, maxFollowersCount);
             }
             author.setAuthority(value);

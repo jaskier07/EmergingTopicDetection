@@ -24,15 +24,18 @@ class AugmentedNormalizedTermFrequencyCounterTest {
     @Test
     void givenWordsAndFrequenciesCheckIfDogsANTFValueIs_1() {
         Assertions.assertEquals(1., AugmentedNormalizedTermFrequencyCounter.count("dog", wordFrequencies));
+        Assertions.assertEquals(1., AugmentedNormalizedTermFrequencyCounter.count(10, 10));
     }
 
     @Test
     void givenWordsAndFrequenciesCheckIfCatsANTFValueIs_0_75() {
         Assertions.assertEquals(0.75, AugmentedNormalizedTermFrequencyCounter.count("cat", wordFrequencies));
+        Assertions.assertEquals(0.75, AugmentedNormalizedTermFrequencyCounter.count(5, 10));
     }
 
     @Test
     void givenWordsAndFrequenciesCheckIfBirdsANTFValueIs_0_55() {
         Assertions.assertEquals(0.55, AugmentedNormalizedTermFrequencyCounter.count("bird", wordFrequencies));
+        Assertions.assertEquals(0.55, AugmentedNormalizedTermFrequencyCounter.count(1, 10));
     }
 }

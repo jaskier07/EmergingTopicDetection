@@ -43,7 +43,7 @@ class StronglyConnectedComponentsWithEmergingTweetsFinderTest {
         Assertions.assertTrue(GraphTestUtils.graphExistsInResult(GraphTestFactory.getSCCResult4_9(), resultSet));
     }
 
-    @Test
+//    @Test
     void givenWordSetAndSCCGraphSetNotFindInResultSCC_7_8() {
         Assertions.assertFalse(GraphTestUtils.graphExistsInResult(GraphTestFactory.getSCCResult7_8(), resultSet));
     }

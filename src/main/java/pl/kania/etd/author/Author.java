@@ -8,10 +8,9 @@ import lombok.Value;
 import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "username")
 public class Author {
 
-    private final String id;
     private final String username;
     private final int followers;
     private int tweetsWritten = 1;
@@ -20,7 +19,6 @@ public class Author {
 
     public Author(String username, int followers) {
         this.username = username;
-        this.id = UUID.randomUUID().toString();
         this.followers = followers;
     }
 

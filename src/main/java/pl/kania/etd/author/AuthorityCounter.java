@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorityCounter {
 
-    public static double countBasedOnANTF(Author author, Map<Author, Integer> followersPerAuthor) {
-        return AugmentedNormalizedTermFrequencyCounter.count(author, followersPerAuthor);
+    public static double countBasedOnANTF(int followers, int highestFollowers) {
+        return AugmentedNormalizedTermFrequencyCounter.count(followers, highestFollowers);
     }
 
     public static double countBasedOnFollowers(Author author, int maxFollowersCount) {

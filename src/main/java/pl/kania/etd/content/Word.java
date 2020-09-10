@@ -4,25 +4,20 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @EqualsAndHashCode(of = "id")
 public class Word implements Comparable<Word> {
+    private static Integer currentId = 0;
 
-    private final String id = UUID.randomUUID().toString();
+    private final int id = currentId++;
     private final String word;
     private final double weight;
     @Setter
-    private Tweet tweet;
+    private String authorUserName;
 
     public Word(String word, double weight) {
         this.weight = weight;
         this.word = word;
-    }
-
-    public boolean equalsWord(Word other) {
-        return word.equals(other.getWord());
     }
 
     @Override

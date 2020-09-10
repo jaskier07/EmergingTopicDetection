@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,15 +41,17 @@ public class CsvReader {
         Set<Tweet> tweets = new HashSet<>();
 
         try (InputStream is = getClass().getResourceAsStream(path);
-             InputStreamReader input = new InputStreamReader(is)
+             InputStreamReader input = new InputStreamReader(is);
+             CSVParser csvParser = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(input)
         ) {
             ProgressLogger pl = new ProgressLogger("Reading file");
-            CSVParser csvParser = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(input);
             for (CSVRecord record : csvParser) {
                 try {
                     Tweet tweet = getTweetFromRecord(record);
                     tweets.add(tweet);
                     pl.log();
+                } catch (DateTimeParseException dtpe) {
+                    log.warn("Error parsing date");
                 } catch (Exception e) {
                     log.warn("Problem with reading record. Record number: " + record.getRecordNumber(), e);
                 }

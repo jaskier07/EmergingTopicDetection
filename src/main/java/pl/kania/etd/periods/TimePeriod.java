@@ -15,15 +15,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "index")
 public class TimePeriod implements SavingMemory {
 
-    private final String id;
     private final int index;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
     private final Set<Tweet> tweets = new HashSet<>();
-    private final Set<Word> words = new HashSet<>();
     private final Map<String, WordStatistics> wordStatistics = new HashMap<>();
     private final Map<Cooccurrence, Integer> cooccurrences = new HashMap<>();
     @Setter
@@ -33,7 +31,6 @@ public class TimePeriod implements SavingMemory {
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;
-        this.id = UUID.randomUUID().toString();
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -49,8 +46,8 @@ public class TimePeriod implements SavingMemory {
 
     @Override
     public void saveMemory() {
+        tweets.forEach(Tweet::saveMemory);
         tweets.clear();
-        words.clear();
     }
 
     public void dropRareWords() {
@@ -58,15 +55,14 @@ public class TimePeriod implements SavingMemory {
                 .filter(e -> e.getValue().getTweets() == 1)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
-        words.removeIf(w -> wordsToDrop.contains(w.getWord()));
+        tweets.forEach(t -> t.getWords().removeIf(w -> wordsToDrop.contains(w.getWord())));
         wordStatistics.entrySet().removeIf(w -> wordsToDrop.contains(w.getKey()));
     }
 
     public void addTweet(Tweet tweet) {
         tweets.add(tweet);
-        words.addAll(tweet.getWords());
 
-        Word[] words = tweet.getWords().toArray(new Word[0]);
+        final Word[] words = tweet.getWords().toArray(new Word[0]);
         for (int i = 0; i < words.length; i++) {
             for (int j = i + 1; j < words.length; j++) {
                 cooccurrences.merge(new Cooccurrence(words[i].getWord(), words[j].getWord()), 1, (w1, w2) -> w1 + 1);
@@ -85,5 +81,11 @@ public class TimePeriod implements SavingMemory {
                 .filter(WordStatistics::isEmerging)
                 .map(WordStatistics::getWord)
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Word> getWords() {
+        Set<Word> words = new HashSet<>();
+        tweets.forEach(tweet -> words.addAll(tweet.getWords()));
+        return words;
     }
 }

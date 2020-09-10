@@ -16,7 +16,7 @@ public class ContentSplitter {
         Set<Word> words = new HashSet<>();
 
         wordFrequencies.forEach((key, value) -> {
-            if (!isNumber(key) && meetsMinLengthCondition(key)) {
+            if (meetsMinLengthCondition(key)) {
                 double weight = AugmentedNormalizedTermFrequencyCounter.count(key, wordFrequencies);
                 words.add(new Word(key, weight));
             }

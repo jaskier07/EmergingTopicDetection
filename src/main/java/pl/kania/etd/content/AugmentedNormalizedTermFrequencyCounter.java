@@ -18,7 +18,14 @@ public class AugmentedNormalizedTermFrequencyCounter {
         return 0.5 + 0.5 * (1. * wordFrequency / highestFrequency);
     }
 
-    private static<T> int getHighestFrequency(Map<T, Integer> wordFrequencies) {
+    public static<T> double count(int wordFrequency, int highestFrequency) {
+        if (highestFrequency == 0) {
+            return 0;
+        }
+        return 0.5 + 0.5 * (1. * wordFrequency / highestFrequency);
+    }
+
+    public static<T> int getHighestFrequency(Map<T, Integer> wordFrequencies) {
         return wordFrequencies.values()
                 .stream()
                 .max(Integer::compareTo)

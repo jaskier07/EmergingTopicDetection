@@ -6,17 +6,16 @@ import pl.kania.etd.content.Tweet;
 import pl.kania.etd.debug.ProgressLogger;
 
 import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TimePeriodInTweetsSetter {
 
-    public static void setTimePeriod(Collection<Tweet> tweets) {
+    public static void setTimePeriod(List<TimePeriod> periods, Collection<Tweet> tweets) {
         ProgressLogger pl = new ProgressLogger("Setting time periods for tweets");
 
-        TimePeriods periods = TimePeriods.getInstance();
         tweets.forEach(tweet -> {
-            TimePeriod period = periods.getPeriodFromDate(tweet.getCreatedAt());
-            tweet.setTimePeriod(period);
+            TimePeriod period = TimePeriods.getPeriodFromDate(periods, tweet.getCreatedAt());
             period.addTweet(tweet);
 
             pl.log();

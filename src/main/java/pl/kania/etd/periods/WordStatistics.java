@@ -20,7 +20,7 @@ public class WordStatistics implements HasValue<WordStatistics> {
     private double energy;
     @Setter
     private boolean emerging;
-    private final Map<String, Double> correlationVector = new HashMap<>();
+    private Map<String, Double> correlationVector;
 
     public WordStatistics(String word) {
         this.word = word;
@@ -41,5 +41,12 @@ public class WordStatistics implements HasValue<WordStatistics> {
             return -1;
         }
         return Double.compare(energy, o.getEnergy());
+    }
+
+    public Map<String, Double> getCorrelationVector() {
+        if (correlationVector == null) {
+            correlationVector = new HashMap<>();
+        }
+        return correlationVector;
     }
 }

@@ -3,6 +3,7 @@ package pl.kania.etd.energy;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import pl.kania.etd.author.Author;
+import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Tweet;
 import pl.kania.etd.content.Word;
 import pl.kania.etd.periods.TimePeriod;
@@ -20,11 +21,12 @@ public class NutritionCounter {
      */
     public static void countAndSetNutritionInPeriod(TimePeriod period) {
         Map<String, List<Word>> wordOccurrences = getWordOccurrences(period.getWords());
+        Authors authors = Authors.getInstance();
         wordOccurrences.forEach((key, value) -> {
             double wordNutrition = value.stream()
                     .map(w -> {
                         double wordWeight = w.getWeight();
-                        double authority = w.getTweet().getAuthor().getAuthority();
+                        double authority = authors.getAuthor(w.getAuthorUserName()).getAuthority();
                         return wordWeight * authority;
                     }).reduce(Double::sum)
                     .orElseThrow(() -> new IllegalStateException("Error counting nutrition"));

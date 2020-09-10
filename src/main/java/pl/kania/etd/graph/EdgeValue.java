@@ -1,14 +1,18 @@
 package pl.kania.etd.graph;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import pl.kania.etd.graph.drop.HasValue;
 
 import java.util.UUID;
 
 @Value
+@EqualsAndHashCode(of = "id")
 public class EdgeValue implements HasValue<EdgeValue> {
 
-    String id = UUID.randomUUID().toString();
+    private static Integer currentId = 0;
+
+    int id = currentId++;
     double value;
 
     @Override
