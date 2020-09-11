@@ -49,4 +49,8 @@ public class WordStatistics implements HasValue<WordStatistics> {
         }
         return correlationVector;
     }
+
+    public void clearCorrelationVector() {
+        correlationVector.clear();
+    }
 }

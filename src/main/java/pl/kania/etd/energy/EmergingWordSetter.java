@@ -20,6 +20,7 @@ public class EmergingWordSetter {
 
     public static void setBasedOnThreshold(TimePeriod period, double thresholdEnergy) {
         double dropInPeriod = thresholdEnergy * sumEnergy(period) / allWordsInPeriod(period);
+        period.setDropInPeriod(dropInPeriod);
 
         Counter ctr = new Counter();
         period.getWordStatistics().values().forEach(word -> {

@@ -28,6 +28,10 @@ public class TimePeriod implements SavingMemory {
     private SimpleDirectedWeightedGraph<String, EdgeValue> correlationGraph;
     @Setter
     private double thresholdEnergy;
+    @Setter
+    private double dropInPeriod;
+    @Setter
+    private boolean periodToFree;
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;
@@ -47,7 +51,6 @@ public class TimePeriod implements SavingMemory {
     @Override
     public void saveMemory() {
         tweets.forEach(Tweet::saveMemory);
-        tweets.clear();
     }
 
     public void dropRareWords() {
@@ -87,5 +90,18 @@ public class TimePeriod implements SavingMemory {
         Set<Word> words = new HashSet<>();
         tweets.forEach(tweet -> words.addAll(tweet.getWords()));
         return words;
+    }
+
+    public void freeCorrelation() {
+        wordStatistics.values().forEach(WordStatistics::clearCorrelationVector);
+        correlationGraph = null;
+    }
+
+    public void freePeriod() {
+        tweets.clear();
+        wordStatistics.clear();
+        cooccurrences.clear();
+        correlationGraph = null;
+        periodToFree = true;
     }
 }

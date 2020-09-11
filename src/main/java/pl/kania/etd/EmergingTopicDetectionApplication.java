@@ -10,6 +10,7 @@ import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
 import pl.kania.etd.debug.Counter;
+import pl.kania.etd.debug.ETDLogger;
 import pl.kania.etd.debug.MemoryService;
 import pl.kania.etd.debug.ProgressLogger;
 import pl.kania.etd.energy.EmergingWordSetter;
@@ -30,8 +31,7 @@ import java.util.Set;
 
 @Slf4j
 @SpringBootApplication
-public class
-EmergingTopicDetectionApplication {
+public class EmergingTopicDetectionApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
@@ -75,10 +75,19 @@ EmergingTopicDetectionApplication {
 
         Authors.getInstance().saveMemory();
 
-        int periodIndex = new IntReader().read();
+        int periodIndex = new IntReader().read("Provide period index to search for popular topics");
+        int periodsToDrop = new IntReader().read("How many periods to drop before?");
+        int dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         while (periodIndex != -1) {
-            TimePeriod period = periods.get(periodIndex);
+            int finalPeriodIndex = periodIndex;
+            TimePeriod period = periods.stream().filter(f -> f.getIndex() == finalPeriodIndex).findFirst().get();
             log.info("Preserved period: " + period.toString());
+
+            periods.stream().sequential().limit(periodsToDrop).forEach(TimePeriod::freePeriod);
+            if (dropAfterSelected == 1) {
+                periods.stream().filter(p -> p.getIndex() > period.getIndex()).forEach(p -> p.setPeriodToFree(true));
+            }
+            periods.removeIf(TimePeriod::isPeriodToFree);
             MemoryService.saveAndPrintCurrentFreeMemory();
 
             CorrelationVectorCounter.countCorrelationAndFillWords(period);
@@ -88,6 +97,9 @@ EmergingTopicDetectionApplication {
             AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
             List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
             Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
+
+            sccGraphs.clear();
+            MemoryService.saveAndPrintCurrentFreeMemory();
             List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
 
             sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
@@ -97,12 +109,18 @@ EmergingTopicDetectionApplication {
 
             log.warn("POPULAR TOPICS:");
             Counter ctr = new Counter();
-            sortedTopics.forEach(topic -> {
+            sortedTopics.stream().limit(30).forEach(topic -> {
                 log.info("#" + ctr.getValue() + topic.toString(period));
                 ctr.increment();
             });
 
-            periodIndex = new IntReader().read();
+            MemoryService.saveAndPrintCurrentFreeMemory();
+            period.freeCorrelation();
+
+            ETDLogger.printAllPeriods(periods);
+            periodIndex = new IntReader().read("Provide period index to search for popular topics");
+            periodsToDrop = new IntReader().read("How many periods to drop?");
+            dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         }
     }
 }

@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 @Slf4j
 public class IntReader {
 
-    public int read() {
+    public int read(String text) {
         Integer value = null;
-        log.info("Provide int");
+        log.info(text);
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
