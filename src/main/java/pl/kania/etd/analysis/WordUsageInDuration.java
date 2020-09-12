@@ -15,12 +15,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class WordUsageInDuration extends Writable {
 
-    private final Set<String> words;
+    @Setter
+    private Set<String> words;
+    @Getter(AccessLevel.PROTECTED)
     private final List<TimePeriod> periods;
     private final Duration duration;
     private final FileOutputProvider fop;
@@ -40,28 +41,35 @@ public class WordUsageInDuration extends Writable {
     protected void writeToFile(FileWriter fw) {
         log.info("WORD USAGE OF " + words + " (multiple periods)\n");
         List<WordPeriod> wordPeriods = generatePeriods(periods, duration);
-        countTweetsInPeriods(wordPeriods);
-        writeWords(fw, wordPeriods);
+        countTweetsWithWordsInPeriods(wordPeriods);
+        writeAllRecords(fw, wordPeriods);
     }
 
-    private void countTweetsInPeriods(List<WordPeriod> wordPeriods) {
+    private void countTweetsWithWordsInPeriods(List<WordPeriod> wordPeriods) {
         periods.forEach(period -> {
             period.getTweets().forEach(tweet -> {
+                WordPeriod periodFromDate = TimePeriods.getPeriodFromDate(wordPeriods, tweet.getCreatedAt());
                 if (words.stream().anyMatch(tweet::containsWord)) {
-                    TimePeriods.getPeriodFromDate(wordPeriods, tweet.getCreatedAt()).incrementTweets();
+                    periodFromDate.incrementTweets();
                 }
+                periodFromDate.incrementAllTweets();
             });
         });
     }
 
-    private void writeWords(FileWriter fw, List<WordPeriod> wordPeriods) {
+    private void writeAllRecords(FileWriter fw, List<WordPeriod> wordPeriods) {
         wordPeriods.forEach(p -> {
             try {
-                fw.write(p.getStartTime() + ", " + p.getEndTime() + ", " + p.getTweets() + "\n");
+                writeRecord(fw, p);
             } catch (IOException e) {
                 log.error("Error writing to file " + getFilename());
             }
         });
+    }
+
+    protected void writeRecord(FileWriter fw, WordPeriod p) throws IOException {
+        fw.write(p.getStartTime() + ", " + p.getEndTime() + ", " + p.getTweets() + "\n");
+
     }
 
     @Override
@@ -99,9 +107,14 @@ public class WordUsageInDuration extends Writable {
         private final LocalDateTime startTime;
         private final LocalDateTime endTime;
         private int tweets = 0;
+        private int allTweets = 0;
 
         void incrementTweets() {
             tweets++;
+        }
+
+        void incrementAllTweets() {
+            allTweets++;
         }
     }
 }
