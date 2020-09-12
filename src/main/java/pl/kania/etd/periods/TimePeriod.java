@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(of = "index")
-public class TimePeriod implements SavingMemory {
+public class TimePeriod implements SavingMemory, Durable {
 
     private final int index;
     private final LocalDateTime startTime;

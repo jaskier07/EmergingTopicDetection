@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TimePeriods {
 
-    public static TimePeriod getPeriodFromDate(final List<TimePeriod> periods, final LocalDateTime date) {
+    public static <T extends Durable>T getPeriodFromDate(final List<T> periods, final LocalDateTime date) {
         return periods.stream()
                 .filter(p -> (date.isBefore(p.getEndTime()) && date.isAfter(p.getStartTime()) || date.isEqual(p.getStartTime())))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Period for date " + date + " not found! Available periods: " + getPeriodRanges(periods)));
     }
 
-    private static String getPeriodRanges(final List<TimePeriod> periods) {
+    private static <T extends Durable>String getPeriodRanges(final List<T> periods) {
         return periods.stream()
-                .map(TimePeriod::toString)
+                .map(T::toString)
                 .collect(Collectors.joining());
     }
 }

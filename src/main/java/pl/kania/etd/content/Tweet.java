@@ -31,6 +31,10 @@ public class Tweet implements SavingMemory {
         return "Author: " + author + "; " + words.toString();
     }
 
+    public boolean containsWord(String word) {
+        return words.stream().anyMatch(w -> w.getWord().equals(word));
+    }
+
     @Override
     public void saveMemory() {
         words.clear();
