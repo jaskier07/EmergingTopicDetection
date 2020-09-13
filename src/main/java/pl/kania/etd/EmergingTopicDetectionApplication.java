@@ -9,10 +9,7 @@ import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
-import pl.kania.etd.debug.Counter;
-import pl.kania.etd.debug.ETDLogger;
-import pl.kania.etd.debug.MemoryService;
-import pl.kania.etd.debug.ProgressLogger;
+import pl.kania.etd.debug.*;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
@@ -34,8 +31,10 @@ import java.util.Set;
 public class EmergingTopicDetectionApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
+        TimeDifferenceCounter tdc = new TimeDifferenceCounter();
+        tdc.start();
 
+        ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
         Environment environment = ctx.getBean(Environment.class);
         int numPreviousPeriods = Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods"));
         double thresholdEnergy = Double.parseDouble(environment.getProperty("pl.kania.threshold-energy"));
@@ -74,11 +73,14 @@ public class EmergingTopicDetectionApplication {
         });
 
         Authors.getInstance().saveMemory();
+        tdc.stop();
 
         int periodIndex = new IntReader().read("Provide period index to search for popular topics");
         int periodsToDrop = new IntReader().read("How many periods to drop before?");
         int dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         while (periodIndex != -1) {
+            tdc.start();
+
             int finalPeriodIndex = periodIndex;
             TimePeriod period = periods.stream().filter(f -> f.getIndex() == finalPeriodIndex).findFirst().get();
             log.info("Preserved period: " + period.toString());
@@ -113,6 +115,8 @@ public class EmergingTopicDetectionApplication {
                 log.info("#" + ctr.getValue() + topic.toString(period));
                 ctr.increment();
             });
+            tdc.stop();
+            log.info(tdc.getDifference());
 
             MemoryService.saveAndPrintCurrentFreeMemory();
             period.freeCorrelation();
