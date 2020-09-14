@@ -36,20 +36,36 @@ public class CsvReader {
     }
 
     public CsvReaderResult readFile(String path) {
+        return readFile(path, 0, Integer.MAX_VALUE);
+    }
+
+    public CsvReaderResult readFile(String path, int startFromTweet, int endOnTweet) {
         firstTweetTime = LocalDateTime.MAX;
         lastTweetTime = LocalDateTime.MIN;
         Set<Tweet> tweets = new HashSet<>();
+        int currentTweet = 0;
 
         try (InputStream is = getClass().getResourceAsStream(path);
              InputStreamReader input = new InputStreamReader(is);
              CSVParser csvParser = CSVFormat.EXCEL.withFirstRecordAsHeader().parse(input)
         ) {
-            ProgressLogger pl = new ProgressLogger("Reading file");
+            ProgressLogger pl = new ProgressLogger("Reading file from " + startFromTweet + " to " + endOnTweet + " tweets");
             for (CSVRecord record : csvParser) {
                 try {
-                    Tweet tweet = getTweetFromRecord(record);
+                    boolean tweetNotToSave = currentTweet++ < startFromTweet;
+                    Tweet tweet = getTweetFromRecord(record, tweetNotToSave);
+
+                    if (tweetNotToSave) {
+                        continue;
+                    }
+
                     tweets.add(tweet);
                     pl.log();
+
+                    if (tweets.size() == endOnTweet) {
+                        log.info("Stopped reading file on " + endOnTweet + " tweet.");
+                        break;
+                    }
                 } catch (DateTimeParseException dtpe) {
                     log.warn("Error parsing date");
                 } catch (Exception e) {
@@ -65,12 +81,12 @@ public class CsvReader {
         }
     }
 
-    private Tweet getTweetFromRecord(CSVRecord record) {
+    private Tweet getTweetFromRecord(CSVRecord record, boolean tweetNotToSave) {
         String username = record.get("user_screen_name");
         int followers = parseInt(record.get("user_followers_count"), username);
         Author author = authors.getAuthorAndAddIfNotExists(username, followers);
 
-        LocalDateTime date = parseDate(record.get("created_at"));
+        LocalDateTime date = parseDate(record.get("created_at"), tweetNotToSave);
         String content = record.get("text");
         return new Tweet(author, content, date);
     }
@@ -88,16 +104,18 @@ public class CsvReader {
         }
     }
 
-    private LocalDateTime parseDate(String value) {
+    private LocalDateTime parseDate(String value, boolean tweetNotToSave) {
         if (Strings.isBlank(value)) {
             return null;
         }
         LocalDateTime date = LocalDateTime.from(dtf.parse(value));
-        if (date.isBefore(firstTweetTime)) {
-            firstTweetTime = date;
-        }
-        if (date.isAfter(lastTweetTime)) {
-            lastTweetTime = date;
+        if (!tweetNotToSave) {
+            if (date.isBefore(firstTweetTime)) {
+                firstTweetTime = date;
+            }
+            if (date.isAfter(lastTweetTime)) {
+                lastTweetTime = date;
+            }
         }
         return date;
     }

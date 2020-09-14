@@ -16,18 +16,26 @@ import java.util.List;
 public class TimePeriodGenerator {
 
     public static List<TimePeriod> generate(LocalDateTime start, LocalDateTime end, Environment environment) {
+        return generate(start, end, environment, 0);
+    }
+
+    public static List<TimePeriod> generate(LocalDateTime start, LocalDateTime end, Environment environment, int startIndex) {
         long periodStep = Long.parseLong(environment.getProperty("pl.kania.period-duration"));
         int chronoUnitOrdinal = Integer.parseInt(environment.getProperty("pl.kania.period-duration.chrono-unit-ordinal"));
         Duration periodDuration = Duration.of(periodStep, ChronoUnit.values()[chronoUnitOrdinal]);
-        return generate(start, end, periodDuration);
+        return generate(start, end, periodDuration, startIndex);
     }
 
     public static List<TimePeriod> generate(LocalDateTime start, LocalDateTime end, Duration periodDuration) {
+        return generate(start, end, periodDuration, 0);
+    }
+
+    public static List<TimePeriod> generate(LocalDateTime start, LocalDateTime end, Duration periodDuration, int startIndex) {
         List<TimePeriod> periods = new ArrayList<>();
 
         LocalDateTime periodStart = start;
         LocalDateTime periodEnd;
-        int index = 0;
+        int index = startIndex;
 
         while (periodStart.isBefore(end)) {
             periodEnd = periodStart.plus(periodDuration);

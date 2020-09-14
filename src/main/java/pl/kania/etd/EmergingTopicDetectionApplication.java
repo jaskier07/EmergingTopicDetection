@@ -45,7 +45,7 @@ public class EmergingTopicDetectionApplication {
         boolean authorityAugmented = Boolean.parseBoolean(environment.getProperty("pl.kania.authority-augmented"));
 
         CsvReader reader = ctx.getBean(CsvReader.class);
-        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
+        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset, 0, 500_000);
         MemoryService.saveAndPrintCurrentFreeMemory();
 
         List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);

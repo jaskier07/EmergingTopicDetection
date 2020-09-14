@@ -32,6 +32,7 @@ public class TimePeriod implements SavingMemory, Durable {
     private double dropInPeriod;
     @Setter
     private boolean periodToFree;
+    private int tweetsCount;
 
     public TimePeriod(int index, LocalDateTime startTime, LocalDateTime endTime) {
         this.index = index;
@@ -77,6 +78,8 @@ public class TimePeriod implements SavingMemory, Durable {
                 return w1;
             });
         }
+
+        tweetsCount++;
     }
 
     public Set<String> getEmergingWords() {

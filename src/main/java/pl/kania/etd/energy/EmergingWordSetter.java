@@ -44,6 +44,9 @@ public class EmergingWordSetter {
     }
 
     private static double sumEnergy(TimePeriod period) {
+        if (period.getWordStatistics().isEmpty()) {
+            return 0;
+        }
         return period.getWordStatistics().values().stream()
                 .map(WordStatistics::getEnergy)
                 .reduce(Double::sum)
