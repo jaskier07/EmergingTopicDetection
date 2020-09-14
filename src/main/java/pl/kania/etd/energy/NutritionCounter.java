@@ -21,7 +21,7 @@ public class NutritionCounter {
      */
     public static void countAndSetNutritionInPeriod(TimePeriod period) {
         Map<String, List<Word>> wordOccurrences = getWordOccurrences(period.getWords());
-        Authors authors = Authors.getInstance();
+        Authors authors = new Authors();
         wordOccurrences.forEach((key, value) -> {
             double wordNutrition = value.stream()
                     .map(w -> {

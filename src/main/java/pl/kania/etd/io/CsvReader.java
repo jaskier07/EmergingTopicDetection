@@ -1,5 +1,7 @@
 package pl.kania.etd.io;
 
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -23,23 +25,21 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@NoArgsConstructor
 public class CsvReader {
 
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEE LLL dd HH:mm:ss xxxx yyyy");
 
-    private final Authors authors;
+    private Authors authors;
     private LocalDateTime firstTweetTime;
     private LocalDateTime lastTweetTime;
 
-    public CsvReader() {
-        this.authors = Authors.getInstance();
+    public CsvReaderResult readFile(Authors authors, String path) {
+        return readFile(authors, path, 0, Integer.MAX_VALUE);
     }
 
-    public CsvReaderResult readFile(String path) {
-        return readFile(path, 0, Integer.MAX_VALUE);
-    }
-
-    public CsvReaderResult readFile(String path, int startFromTweet, int endOnTweet) {
+    public CsvReaderResult readFile(Authors authors, String path, int startFromTweet, int endOnTweet) {
+        this.authors = authors;
         firstTweetTime = LocalDateTime.MAX;
         lastTweetTime = LocalDateTime.MIN;
         Set<Tweet> tweets = new HashSet<>();

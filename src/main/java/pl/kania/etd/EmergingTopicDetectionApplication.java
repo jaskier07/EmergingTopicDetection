@@ -44,8 +44,9 @@ public class EmergingTopicDetectionApplication {
         boolean autoThreshold = Boolean.parseBoolean(environment.getProperty("pl.kania.threshold-energy-auto"));
         boolean authorityAugmented = Boolean.parseBoolean(environment.getProperty("pl.kania.authority-augmented"));
 
+        Authors authors = new Authors();
         CsvReader reader = ctx.getBean(CsvReader.class);
-        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset, 0, 500_000);
+        CsvReaderResult csvReaderResult = reader.readFile(authors, pathToDataset, 0, 500_000);
         MemoryService.saveAndPrintCurrentFreeMemory();
 
         List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
@@ -54,8 +55,8 @@ public class EmergingTopicDetectionApplication {
         periods.forEach(TimePeriod::dropRareWords);
         MemoryService.saveAndPrintCurrentFreeMemory();
 
-        AuthoritySetter.setForAllAuthors(authorityAugmented);
-        Authors.getInstance().printMostImportantAuthors();
+        AuthoritySetter.setForAllAuthors(authors, authorityAugmented);
+        authors.printMostImportantAuthors();
         MemoryService.saveAndPrintCurrentFreeMemory();
 
         periods.forEach(NutritionCounter::countAndSetNutritionInPeriod);
@@ -72,7 +73,7 @@ public class EmergingTopicDetectionApplication {
             }
         });
 
-        Authors.getInstance().saveMemory();
+        authors.saveMemory();
         tdc.stop();
 
         int periodIndex = new IntReader().read("Provide period index to search for popular topics");

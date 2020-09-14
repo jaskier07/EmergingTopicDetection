@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthoritySetter {
 
-    public static void setForAllAuthors(boolean authorityAugmented) {
-        ProgressLogger pl = new ProgressLogger("Setting authors' authority");
+    public static void setForAllAuthors(Authors authors, boolean authorityAugmented) {
+        setForAllAuthors(authors, authorityAugmented, getMaxFollowersCount(authors.getAllAuthors()));
+    }
 
-        Authors authors = Authors.getInstance();
-        int maxFollowersCount = getMaxFollowersCount(authors.getAllAuthors());
+    public static void setForAllAuthors(Authors authors, boolean authorityAugmented, final int maxFollowersCount) {
+        ProgressLogger pl = new ProgressLogger("Setting authors' authority");
 
         authors.getAllAuthors().forEach(author -> {
             double value;

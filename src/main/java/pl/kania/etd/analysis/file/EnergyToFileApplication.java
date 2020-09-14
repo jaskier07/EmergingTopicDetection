@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.EmergingTopicDetectionApplication;
+import pl.kania.etd.author.Author;
 import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @SpringBootApplication(scanBasePackages = "pl.kania")
-public class EtdToFileApplication {
+public class EnergyToFileApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
@@ -54,14 +55,21 @@ public class EtdToFileApplication {
 
         FileOutputProvider fop = ctx.getBean(FileOutputProvider.class);
         CsvReader reader = ctx.getBean(CsvReader.class);
-        ResultWriter writer = new ResultWriter(fop);
 
         Authors authors = new Authors();
+
+        PeriodWriter pw = new PeriodWriter(fop);
+        EnergyWriter ew = new EnergyWriter(fop);
+        AuthorsWriter aw = new AuthorsWriter(fop);
+
         CsvReaderResult csvReaderResult = reader.readFile(authors, pathToDataset, startFromTweet, startFromTweet + tweetBatchSize);
         MemoryService.saveAndPrintCurrentFreeMemory();
 
         AuthoritySetter.setForAllAuthors(authors, authorityAugmented);
-        authors.printMostImportantAuthors();
+        authors.getAllAuthors().forEach(author -> {
+            aw.appendText(author.getUsername() + "," + author.getAuthority());
+        });
+
         MemoryService.saveAndPrintCurrentFreeMemory();
 
         List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(),
@@ -87,49 +95,19 @@ public class EtdToFileApplication {
             }
         });
 
-        // -1 because don't save last period, which will be too small
-//        for (int periodIndex = currentPeriodIndex - currentFindTopicsPeriodIndex; periodIndex < periods.size() - 1; periodIndex++) {
-//            TimePeriod period = periods.get(periodIndex);
-//
-//            if (period.getTweetsCount() == 0) {
-//                log.warn("Stepping out of loop");
-//                break;
-//            }
-//
-//            CorrelationVectorCounter.countCorrelationAndFillWords(period);
-//            MemoryService.saveAndPrintCurrentFreeMemory();
-//
-//            period.setCorrelationGraph(GraphGenerator.generate(period.getWordStatistics()));
-//            AdaptiveGraphEdgesCutOff.perform(period.getCorrelationGraph());
-//            List<Graph<String, EdgeValue>> sccGraphs = StronglyConnectedComponentsFinder.find(period.getCorrelationGraph());
-//            Set<Graph<String, EdgeValue>> topics = StronglyConnectedComponentsWithEmergingTweetsFinder.find(period.getEmergingWords(), sccGraphs);
-//
-//            sccGraphs.clear();
-//            MemoryService.saveAndPrintCurrentFreeMemory();
-//            List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
-//
-//            sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
-//            new ProgressLogger().done();
-//            GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
-//            GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
-//
-//            for (Topic topic : sortedTopics.subList(0, Math.min(10, sortedTopics.size()))) {
-//                writer.appendText(period.getIndex() + "," + period.getStartTime() + "," + period.getEndTime() + ","
-//                        + NumberFormatter.format(topic.getEnergy(), 5) + ","
-//                        + topic.getWordsSortedByEnergy(period)
-//                        .stream()
-//                        .map(WordStatistics::getWord)
-//                        .collect(Collectors.joining(",")) + "\n");
-//            }
-//            log.info("period:" + period.getIndex());
-//
-//            MemoryService.saveAndPrintCurrentFreeMemory();
-//            period.freeCorrelation();
-//        }
-//
-//        periods.clear();
-//        MemoryService.saveAndPrintCurrentFreeMemory();
+        periods.forEach(period -> {
+            pw.appendText(period.getIndex() + "," + period.getStartTime() + "," + period.getEndTime() + "," + period.getTweetsCount() + "\n");
+            period.getWordStatistics().values().forEach(word -> {
+                ew.appendText(period.getIndex() + "," + word.getWord() + "," + word.getEnergy() + "," + word.getTweets() + "\n");
+            });
+            period.freePeriod();
+        });
 
-        writer.write();
+        periods.clear();
+        pw.write();
+        ew.write();
+
+        MemoryService.saveAndPrintCurrentFreeMemory();
+
     }
 }

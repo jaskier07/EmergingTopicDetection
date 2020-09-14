@@ -1,26 +1,19 @@
 package pl.kania.etd.author;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.kania.etd.SavingMemory;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Authors implements SavingMemory {
+public class Authors implements SavingMemory, Serializable {
 
-    private static final Map<String, Author> authors = new HashMap<>();
-    private static Authors instance;
-
-    public static Authors getInstance() {
-        if (instance == null) {
-            instance = new Authors();
-        }
-        return instance;
-    }
+    private final Map<String, Author> authors = new HashMap<>();
 
     public Author getAuthorAndAddIfNotExists(String username, int followers) {
         if (authors.containsKey(username)) {

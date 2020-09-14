@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import pl.kania.etd.EmergingTopicDetectionApplication;
+import pl.kania.etd.author.Authors;
 import pl.kania.etd.debug.MemoryService;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
@@ -27,8 +28,9 @@ public class DatasetAnalysis {
         FileOutputProvider fop = ctx.getBean(FileOutputProvider.class);
         String pathToDataset = environment.getProperty("pl.kania.path.dataset-analysis");
 
+        Authors authors = new Authors();
         CsvReader reader = ctx.getBean(CsvReader.class);
-        CsvReaderResult csvReaderResult = reader.readFile(pathToDataset);
+        CsvReaderResult csvReaderResult = reader.readFile(authors, pathToDataset);
 
         List<TimePeriod> periods = TimePeriodGenerator.generate(csvReaderResult.getFirstTweetDate(), csvReaderResult.getLastTweetDate(), environment);
         TimePeriodInTweetsSetter.setTimePeriod(periods, csvReaderResult.getTweetSet());

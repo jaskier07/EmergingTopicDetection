@@ -20,7 +20,7 @@ public abstract class Writable {
 
     protected abstract void writeToFile(FileWriter fw) throws IOException;
 
-    public void write() {
+    public String write() {
         FileOutputProvider fop = getFileOutputProvider();
 
         Filepath filepath = fop.get(getFilename());
@@ -31,5 +31,7 @@ public abstract class Writable {
         } catch (IOException e) {
             log.error("Error creating file " + filepath.getFilename(), e);
         }
+
+        return filepath.getFilename();
     }
 }
