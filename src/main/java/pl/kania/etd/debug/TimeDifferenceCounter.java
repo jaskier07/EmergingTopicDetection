@@ -20,7 +20,11 @@ public class TimeDifferenceCounter {
     }
 
     public String getDifference() {
-        return "Time in seconds = " + duration.getSeconds() + "s";
+        return "Time in seconds = " + duration.toSeconds() + "s";
+    }
+
+    public Long getDifferenceInMillis() {
+        return duration.toMillis();
     }
 
 }

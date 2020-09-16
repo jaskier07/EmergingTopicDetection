@@ -18,7 +18,7 @@ public abstract class Writable {
 
     protected abstract String getHeader();
 
-    protected abstract void writeToFile(FileWriter fw);
+    protected abstract void writeToFile(FileWriter fw) throws IOException;
 
     public void write() {
         FileOutputProvider fop = getFileOutputProvider();

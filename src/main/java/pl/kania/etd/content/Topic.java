@@ -22,8 +22,9 @@ public class Topic {
         graph.vertexSet().forEach(w -> words.add(statistics.get(w)));
 
         words.sort(Comparator.comparingDouble(WordStatistics::getEnergy).reversed());
-        return "[E: " + NumberFormatter.format(energy, 4) + "] " + words.stream()
-                .map(w -> "(" + w.getWord() + ", " + NumberFormatter.format(w.getEnergy(), 3) + ")")
-                .collect(Collectors.joining(", ")) ;
+        return NumberFormatter.format(energy, 4) + "," +
+                words.stream()
+                        .map(WordStatistics::getWord)
+                        .collect(Collectors.joining(","));
     }
 }

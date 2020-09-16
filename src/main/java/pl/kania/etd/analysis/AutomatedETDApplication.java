@@ -1,4 +1,4 @@
-package pl.kania.etd;
+package pl.kania.etd.analysis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.Graph;
@@ -9,7 +9,10 @@ import org.springframework.core.env.Environment;
 import pl.kania.etd.author.AuthoritySetter;
 import pl.kania.etd.author.Authors;
 import pl.kania.etd.content.Topic;
-import pl.kania.etd.debug.*;
+import pl.kania.etd.debug.Counter;
+import pl.kania.etd.debug.MemoryService;
+import pl.kania.etd.debug.TimeDifferenceCounter;
+import pl.kania.etd.energy.AverageCounter;
 import pl.kania.etd.energy.EmergingWordSetter;
 import pl.kania.etd.energy.EnergyCounter;
 import pl.kania.etd.energy.NutritionCounter;
@@ -18,23 +21,25 @@ import pl.kania.etd.graph.scc.StronglyConnectedComponentsFinder;
 import pl.kania.etd.graph.scc.StronglyConnectedComponentsWithEmergingTweetsFinder;
 import pl.kania.etd.io.CsvReader;
 import pl.kania.etd.io.CsvReaderResult;
-import pl.kania.etd.io.IntReader;
+import pl.kania.etd.io.FileOutputProvider;
 import pl.kania.etd.periods.TimePeriod;
 import pl.kania.etd.periods.TimePeriodGenerator;
 import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
-@SpringBootApplication
-public class EmergingTopicDetectionApplication {
+@SpringBootApplication(scanBasePackages = "pl.kania")
+public class AutomatedETDApplication {
 
     public static void main(String[] args) {
-        TimeDifferenceCounter tdc = new TimeDifferenceCounter();
-        tdc.start();
+        TimeDifferenceCounter overallTdc = new TimeDifferenceCounter();
+        overallTdc.start();
 
-        ConfigurableApplicationContext ctx = SpringApplication.run(EmergingTopicDetectionApplication.class, args);
+        ConfigurableApplicationContext ctx = SpringApplication.run(pl.kania.etd.EmergingTopicDetectionApplication.class, args);
         Environment environment = ctx.getBean(Environment.class);
         int numPreviousPeriods = Integer.parseInt(environment.getProperty("pl.kania.num-previous-periods"));
         double thresholdEnergy = Double.parseDouble(environment.getProperty("pl.kania.threshold-energy"));
@@ -73,26 +78,13 @@ public class EmergingTopicDetectionApplication {
         });
 
         Authors.getInstance().saveMemory();
-        tdc.stop();
+        ResultsWriter rw = new ResultsWriter(ctx.getBean(FileOutputProvider.class));
 
-
-
-        int periodIndex = new IntReader().read("Provide period index to search for popular topics");
-//        int periodsToDrop = new IntReader().read("How many periods to drop before?");
-//        int dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
-        while (periodIndex != -1) {
+        List<Long> executionTimes = new ArrayList<>();
+        for (TimePeriod period : periods) {
+            TimeDifferenceCounter tdc = new TimeDifferenceCounter();
             tdc.start();
-
-            int finalPeriodIndex = periodIndex;
-            TimePeriod period = periods.stream().filter(f -> f.getIndex() == finalPeriodIndex).findFirst().get();
             log.info("Preserved period: " + period.toString());
-
-//            periods.stream().sequential().limit(periodsToDrop).forEach(TimePeriod::freePeriod);
-//            if (dropAfterSelected == 1) {
-//                periods.stream().filter(p -> p.getIndex() > period.getIndex()).forEach(p -> p.setPeriodToFree(true));
-//            }
-//            periods.removeIf(TimePeriod::isPeriodToFree);
-//            MemoryService.saveAndPrintCurrentFreeMemory();
 
             CorrelationVectorCounter.countCorrelationAndFillWords(period);
             MemoryService.saveAndPrintCurrentFreeMemory();
@@ -107,26 +99,31 @@ public class EmergingTopicDetectionApplication {
             List<Topic> sortedTopics = GraphSorter.sortByEnergy(topics, period.getWordStatistics());
 
             sortedTopics.forEach(topic -> AdaptiveGraphEdgesCutOff.perform(topic.getGraph()));
-            new ProgressLogger().done();
+
             GraphFilter.filterOutGraphsSmallerThan(minClusterSize, sortedTopics);
             GraphFilter.cropGraphsBiggerThan(maxClusterSize, sortedTopics, period.getWordStatistics());
 
-            log.warn("POPULAR TOPICS:");
             Counter ctr = new Counter();
-            sortedTopics.stream().limit(30).forEach(topic -> {
-                log.info("#" + ctr.getValue() + topic.toString(period));
+            sortedTopics.stream().limit(10).forEach(topic -> {
+                rw.append(period.getStartTime() + "," + period.getEndTime() + "," + period.getIndex() + "," +
+                        topic.toString(period) + "\n");
                 ctr.increment();
             });
             tdc.stop();
-            log.info(tdc.getDifference());
+            executionTimes.add(tdc.getDifferenceInMillis());
 
             MemoryService.saveAndPrintCurrentFreeMemory();
             period.freeCorrelation();
-
-//            ETDLogger.printAllPeriods(periods);
-            periodIndex = new IntReader().read("Provide period index to search for popular topics");
-//            periodsToDrop = new IntReader().read("How many periods to drop?");
-//            dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         }
+
+        overallTdc.stop();
+        log.info("Overall: " + overallTdc.getDifference() + " seconds");
+
+        List<Double> doubleExecutionTime = executionTimes.stream().map(Long::doubleValue).collect(Collectors.toList());
+        log.info("Average: " + AverageCounter.count(doubleExecutionTime) / 1000 + " seconds");
+
+        log.info("Execution times: " + doubleExecutionTime.stream().map(Object::toString).collect(Collectors.joining(", ")));
+        rw.write();
     }
 }
+

@@ -18,11 +18,13 @@ public class Tweet implements SavingMemory {
     private final Author author;
     private final LocalDateTime createdAt;
     private final Set<Word> words;
+    private String content;
 
     public Tweet(Author author, String content, LocalDateTime createdAt) {
         this.author = author;
         this.createdAt = createdAt;
-        this.words = ContentSplitter.splitIntoWords(new TweetContentPreprocessor().performPreprocessing(content));
+        this.content = new TweetContentPreprocessor().performPreprocessing(content);
+        this.words = ContentSplitter.splitIntoWords(this.content);
         this.words.forEach(w -> w.setAuthorUserName(author.getUsername()));
     }
 
@@ -38,5 +40,6 @@ public class Tweet implements SavingMemory {
     @Override
     public void saveMemory() {
         words.clear();
+        content = null;
     }
 }

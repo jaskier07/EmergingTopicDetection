@@ -51,9 +51,9 @@ public class CsvReader {
                     tweets.add(tweet);
                     pl.log();
                 } catch (DateTimeParseException dtpe) {
-                    log.warn("Error parsing date");
+                    log.debug("Error parsing date");
                 } catch (Exception e) {
-                    log.warn("Problem with reading record. Record number: " + record.getRecordNumber(), e);
+                    log.debug("Problem with reading record. Record number: " + record.getRecordNumber(), e);
                 }
             }
             pl.done("Reading file.");
@@ -83,7 +83,7 @@ public class CsvReader {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            log.error("Cannot parse int: " + e);
+            log.debug("Cannot parse int: " + e);
             return 0;
         }
     }
