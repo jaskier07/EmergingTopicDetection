@@ -29,13 +29,4 @@ public class ContentSplitter {
         return key.length() >= 3;
     }
 
-    private static boolean isNumber(String key) {
-        try {
-            Integer.parseInt(key);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
 }

@@ -3,6 +3,9 @@ package pl.kania.etd.debug;
 import lombok.NoArgsConstructor;
 import pl.kania.etd.SavingMemory;
 
+/**
+ *  Prints data to console to indicate progress.
+ */
 @NoArgsConstructor
 public class ProgressLogger implements SavingMemory {
     private Counter counter = new Counter();

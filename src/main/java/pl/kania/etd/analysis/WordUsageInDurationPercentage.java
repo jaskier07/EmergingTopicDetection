@@ -10,6 +10,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Finds % of tweets containing specified words in every period.
+ */
 public class WordUsageInDurationPercentage extends WordUsageInDuration {
     public WordUsageInDurationPercentage(Set<String> words, List<TimePeriod> periods, Duration duration, FileOutputProvider fop) {
         super(words, periods, duration, fop);

@@ -11,6 +11,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Finds:
+ * - number of tweets written per hour of the day,
+ * - number of authors in a dataset,
+ * - number of unique words in a dataset.
+ */
 public class StatisticsInDataset extends SimpleWritable {
 
     public StatisticsInDataset(FileOutputProvider fop, List<TimePeriod> periods) {

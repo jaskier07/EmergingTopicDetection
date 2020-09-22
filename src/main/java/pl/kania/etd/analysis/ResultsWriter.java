@@ -6,6 +6,9 @@ import pl.kania.etd.io.Writable;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Prints to file most popular words in all periods.
+ */
 public class ResultsWriter extends Writable {
 
     private final FileOutputProvider fop;

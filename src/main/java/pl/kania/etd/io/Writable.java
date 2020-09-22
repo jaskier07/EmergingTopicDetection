@@ -9,6 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+/**
+ * Class to derive from when data need to be saved in a file.
+ */
 @Slf4j
 public abstract class Writable {
 

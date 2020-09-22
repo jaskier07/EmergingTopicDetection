@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Requires setting time periods for tweets.
+ * Finds 10 most popular authors in a dataset.
  */
 public class MostPopularAuthors extends SimpleWritable {
 

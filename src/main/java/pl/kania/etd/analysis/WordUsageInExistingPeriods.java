@@ -18,6 +18,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Finds number of tweets in every period.
+ */
 @Slf4j
 public class WordUsageInExistingPeriods extends Writable {
 

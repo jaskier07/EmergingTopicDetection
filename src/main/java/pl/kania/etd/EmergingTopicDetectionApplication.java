@@ -26,6 +26,15 @@ import pl.kania.etd.periods.TimePeriodInTweetsSetter;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * App detecting popular topics in period specified during app runtime.
+ *
+ * First counts energy for all tweets in all time periods, than in a loop asks user to provide
+ * period index. In this period algorithm will search for popular topics.
+ *
+ * App is memory consuming. Run it with -Xmx8192m JVM parameter while using provided coronavirus
+ * tweet dataset.
+ */
 @Slf4j
 @SpringBootApplication
 public class EmergingTopicDetectionApplication {
@@ -78,21 +87,12 @@ public class EmergingTopicDetectionApplication {
 
 
         int periodIndex = new IntReader().read("Provide period index to search for popular topics");
-//        int periodsToDrop = new IntReader().read("How many periods to drop before?");
-//        int dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         while (periodIndex != -1) {
             tdc.start();
 
             int finalPeriodIndex = periodIndex;
             TimePeriod period = periods.stream().filter(f -> f.getIndex() == finalPeriodIndex).findFirst().get();
             log.info("Preserved period: " + period.toString());
-
-//            periods.stream().sequential().limit(periodsToDrop).forEach(TimePeriod::freePeriod);
-//            if (dropAfterSelected == 1) {
-//                periods.stream().filter(p -> p.getIndex() > period.getIndex()).forEach(p -> p.setPeriodToFree(true));
-//            }
-//            periods.removeIf(TimePeriod::isPeriodToFree);
-//            MemoryService.saveAndPrintCurrentFreeMemory();
 
             CorrelationVectorCounter.countCorrelationAndFillWords(period);
             MemoryService.saveAndPrintCurrentFreeMemory();
@@ -123,10 +123,7 @@ public class EmergingTopicDetectionApplication {
             MemoryService.saveAndPrintCurrentFreeMemory();
             period.freeCorrelation();
 
-//            ETDLogger.printAllPeriods(periods);
             periodIndex = new IntReader().read("Provide period index to search for popular topics");
-//            periodsToDrop = new IntReader().read("How many periods to drop?");
-//            dropAfterSelected = new IntReader().read("Drop periods after selected? 1/0");
         }
     }
 }

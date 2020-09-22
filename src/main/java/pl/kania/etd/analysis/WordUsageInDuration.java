@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Finds how many tweets contained specified words in every period.
+ */
 @Slf4j
 public class WordUsageInDuration extends Writable {
 

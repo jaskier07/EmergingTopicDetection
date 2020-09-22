@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Requires setting time periods for tweets.
+ * Finds 10 most popular words in dataset.
  */
 public class MostPopularWords extends SimpleWritable {
 

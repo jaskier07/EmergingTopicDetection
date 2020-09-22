@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+/**
+ * Class that stops program execution until user provides int value.
+ */
 @Slf4j
 public class IntReader {
 

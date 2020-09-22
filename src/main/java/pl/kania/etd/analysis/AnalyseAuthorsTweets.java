@@ -10,9 +10,12 @@ import pl.kania.etd.periods.TimePeriod;
 
 import java.util.*;
 
-public class AnalyseMostPopularAuthorsTweets extends SimpleWritable {
+/**
+ * Finds tweets for specified authors.
+ */
+public class AnalyseAuthorsTweets extends SimpleWritable {
 
-    public AnalyseMostPopularAuthorsTweets(FileOutputProvider fop, List<TimePeriod> periods, Set<String> authorsToAnalyze) {
+    public AnalyseAuthorsTweets(FileOutputProvider fop, List<TimePeriod> periods, Set<String> authorsToAnalyze) {
         super(fop);
 
         Map<TimePeriod, Tweet> authorsTweet = new HashMap<>();

@@ -31,6 +31,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * App detecting popular topics in all periods.
+ *
+ * First counts energy for all tweets in all time periods, than in a loop searches for popular topics
+ * in every period. Prints results to file.
+ *
+ * App is memory consuming. Run it with -Xmx8192m JVM parameter while using provided coronavirus
+ * tweet dataset.
+ */
 @Slf4j
 @SpringBootApplication(scanBasePackages = "pl.kania")
 public class AutomatedETDApplication {
