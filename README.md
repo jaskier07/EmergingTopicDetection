@@ -1,1 +1,1 @@
-# PersonalizedEmergingTopicDetection
+#EmergingTopicDetection
